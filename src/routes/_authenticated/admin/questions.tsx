@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchAll } from "@/lib/admin-data";
+import { MASTER_BANK, BANK_SIZE, BANK_SUBJECTS } from "@/lib/master-bank";
 
 export const Route = createFileRoute("/_authenticated/admin/questions")({
   component: QuestionBank,
@@ -44,6 +45,28 @@ function QuestionBank() {
     toast.success("Question added to test");
     qc.invalidateQueries({ queryKey: ["admin-questions"] });
   }
+  const [loading, setLoading] = useState(false);
+  async function loadMaster() {
+    if (!confirm(`Create a ready-to-use mock exam with ${BANK_SIZE} questions across ${BANK_SUBJECTS.join(", ")}?`)) return;
+    setLoading(true);
+    const { data: t, error } = await supabase.from("tests").insert({
+      title: "Master Question Bank — UTME Mock", subject: "Multi-subject", status: "draft", duration_minutes: 60,
+      multi_subject: true, per_subject_count: 10, compulsory_subjects: ["English"],
+      elective_subjects: BANK_SUBJECTS.filter((x) => x !== "English"), electives_to_pick: 3,
+      show_corrections: true, show_results: true, shuffle_options: true, shuffle_questions: true,
+      instructions: "Answer all questions. English is compulsory; pick three other subjects.",
+    }).select("id").single();
+    if (error || !t) { setLoading(false); toast.error(error?.message ?? "Could not create test"); return; }
+    let pos = 0;
+    const rows = Object.entries(MASTER_BANK).flatMap(([subj, list]) => list.map(([text, options, correct_answer, explanation]) => ({
+      test_id: t.id, subject: subj, type: "mcq", text, options, correct_answer, explanation, marks: 1, position: ++pos,
+    })));
+    const { error: e2 } = await supabase.from("questions").insert(rows);
+    setLoading(false);
+    if (e2) { toast.error(e2.message); return; }
+    toast.success(`Loaded ${rows.length} questions. Publish the test from the Tests page when ready.`);
+    qc.invalidateQueries();
+  }
   async function del(id: string) {
     if (!confirm("Delete this question?")) return;
     await supabase.from("questions").delete().eq("id", id);
@@ -54,6 +77,13 @@ function QuestionBank() {
     <div>
       <h1 className="text-3xl font-extrabold">Question Bank</h1>
       <p className="text-muted-foreground">Private to you. Add new questions from inside a test; reuse any question in another test here.</p>
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-dashed border-primary/40 bg-primary/5 p-4">
+        <div>
+          <p className="font-bold">Master Question Bank</p>
+          <p className="text-sm text-muted-foreground">{BANK_SIZE} questions in {BANK_SUBJECTS.join(", ")} — with answer keys and step-by-step explanations.</p>
+        </div>
+        <Button disabled={loading} onClick={loadMaster}>{loading ? "Loading..." : "Load in 1 click"}</Button>
+      </div>
       <div className="mt-4 flex flex-wrap gap-2">
         <Input className="max-w-xs" placeholder="Search questions..." value={q} onChange={(e) => setQ(e.target.value)} />
         <Select value={type} onValueChange={setType}>
