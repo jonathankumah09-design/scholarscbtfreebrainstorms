@@ -22,6 +22,34 @@
       "when": 1791459275751,
       "tag": "0002_jamb_randomisation",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791459814707,
+      "tag": "0003_multi_subject_tests",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791459850545,
+      "tag": "0004_proctoring_corrections_live",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791459889024,
+      "tag": "0005_notifications_recording_gift",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791459949994,
+      "tag": "0006_english_compulsory_and_study_syllabus",
+      "breakpoints": true
     }
   ]
 }
