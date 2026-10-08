@@ -15,6 +15,13 @@
       "when": 1791459201775,
       "tag": "0001_scholars_cbt_extensions",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791459275751,
+      "tag": "0002_jamb_randomisation",
+      "breakpoints": true
     }
   ]
 }
