@@ -22,8 +22,26 @@ export function BankPicker({ testId, position, subject = "", onDone }: { testId:
     enabled: open,
     queryFn: () => fetchAll((from, to) => supabase.from("bank_questions").select("*").order("created_at").range(from, to)),
   });
-  const rows = (data ?? []).filter((x) => x.subject === sub && x.text.toLowerCase().includes(q.toLowerCase()));
+  const [range, setRange] = useState("");
+  const subRows = (data ?? []).filter((x) => x.subject === sub);
+  const rows = q ? subRows.filter((x) => x.text.toLowerCase().includes(q.toLowerCase())) : subRows;
   const list = Object.values(picked);
+
+  function selectRange() {
+    const nums = new Set<number>();
+    for (const part of range.split(/[,\s]+/).filter(Boolean)) {
+      const m = part.match(/^(\d+)(?:-(\d+))?$/);
+      if (!m) { toast.error(`Can't read "${part}"`); return; }
+      let a = +m[1], b = m[2] ? +m[2] : a;
+      if (a > b) [a, b] = [b, a];
+      for (let n = a; n <= b; n++) if (n >= 1 && n <= subRows.length) nums.add(n);
+    }
+    const sorted = [...nums].sort((x, y) => x - y);
+    if (!sorted.length) { toast.error(`No matching numbers (1-${subRows.length})`); return; }
+    setPicked((p) => { const n = { ...p }; sorted.forEach((k) => { const x = subRows[k - 1]; n[x.id] = x; }); return n; });
+    toast.success(`${sorted.length} ${sub} questions selected`);
+    setRange("");
+  }
 
   function toggle(x: { id: string; text: string; subject: string }) {
     setPicked((p) => { const n = { ...p }; if (n[x.id]) delete n[x.id]; else n[x.id] = x; return n; });
@@ -63,12 +81,16 @@ export function BankPicker({ testId, position, subject = "", onDone }: { testId:
                 <Input placeholder="Search..." value={q} onChange={(e) => setQ(e.target.value)} />
                 <Button variant="outline" onClick={() => setPicked((p) => { const n = { ...p }; rows.forEach((x) => { n[x.id] = x; }); return n; })}>Select all</Button>
               </div>
+              <div className="flex gap-2">
+                <Input placeholder="Numbers e.g. 1-29, 45-67, 70" value={range} onChange={(e) => setRange(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") selectRange(); }} />
+                <Button variant="outline" onClick={selectRange}>Select numbers</Button>
+              </div>
               <div className="max-h-[55vh] space-y-2 overflow-y-auto">
-                {rows.map((x) => (
+                {rows.map((x, i) => (
                   <label key={x.id} className="flex cursor-pointer gap-3 rounded-xl border bg-card p-3">
                     <Checkbox checked={!!picked[x.id]} onCheckedChange={() => toggle(x)} />
                     <div className="text-sm">
-                      <p className="font-bold">{x.text}</p>
+                      <p className="font-bold">{i + 1}. {x.text}</p>
                       {(x.options as string[]).length > 0 && <p className="text-muted-foreground">{(x.options as string[]).map((o, j) => `${String.fromCharCode(65 + j)}. ${o}`).join("   ")}</p>}
                       <p className="text-success">Answer: {x.correct_answer}</p>
                     </div>
