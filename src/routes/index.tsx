@@ -54,9 +54,9 @@ function Home() {
         </div>
       </section>
       <section className="mx-auto -mt-10 grid max-w-5xl gap-4 px-5 pb-16 sm:grid-cols-2 lg:grid-cols-5">
-        {features.map((f) => (
-          <div key={f.t} className="rounded-2xl border bg-card p-5 shadow-sm">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent text-accent-foreground"><f.icon className="h-5 w-5" /></span>
+        {features.map((f, i) => (
+          <div key={f.t} style={{ animationDelay: `${i * 0.1}s` }} className="animate-float-up rounded-2xl border bg-card/95 p-5 shadow-sm backdrop-blur transition hover:-translate-y-1 hover:shadow-lg">
+            <span style={{ animationDelay: `${i * 0.5}s` }} className="animate-glow flex h-11 w-11 items-center justify-center rounded-xl bg-success text-success-foreground"><f.icon className="h-5 w-5" /></span>
             <p className="mt-3 font-display font-bold">{f.t}</p>
             <p className="mt-1 text-sm text-muted-foreground">{f.d}</p>
           </div>

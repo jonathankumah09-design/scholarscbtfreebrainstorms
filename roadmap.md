@@ -13,5 +13,6 @@
 - [x] Paginate/limit question lists so 1000-row tests stay fast in admin pages
 - [x] Continuous exam recording (30s clips) + near-live view in Live Monitor
 - [x] Admin notification bell (start/submit/tab switch/camera off) + Gmail digest when admin is away
+- [x] Student portal pages (exams, results, practice, science, settings) + homepage glow
 - [x] Messages to students (all / class / one student) on dashboard
 - [ ] Re-link workspace integrations after workspace move: Gmail connection must be linked to this project so admin email digests work
