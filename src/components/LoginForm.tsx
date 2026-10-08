@@ -15,10 +15,19 @@ export function LoginForm({ mode }: { mode: "student" | "admin" }) {
   const [busy, setBusy] = useState(false);
   const hydrated = useHydrated();
 
+  async function resolveEmail(v: string) {
+    const t = v.trim();
+    if (t.includes("@")) return t;
+    const { data } = await supabase.rpc("email_for_student_id", { _sid: t });
+    return (data as string | null) || null;
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
-    const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    const addr = await resolveEmail(email);
+    if (!addr) { setBusy(false); toast.error("No student found with that ID."); return; }
+    const { data, error } = await supabase.auth.signInWithPassword({ email: addr, password });
     if (error) {
       setBusy(false);
       { toast.error(error.message); return; }
@@ -34,8 +43,9 @@ export function LoginForm({ mode }: { mode: "student" | "admin" }) {
   }
 
   async function forgot() {
-    const addr = email.trim();
-    if (!addr) { toast.error("Type your email above first, then tap Forgot password."); return; }
+    if (!email.trim()) { toast.error("Type your email or Student ID above first, then tap Forgot password."); return; }
+    const addr = await resolveEmail(email);
+    if (!addr) { toast.error("No student found with that ID."); return; }
     const { error } = await supabase.auth.resetPasswordForEmail(addr, { redirectTo: `${window.location.origin}/reset-password` });
     if (error) { toast.error(error.message); return; }
     toast.success("Check your email for a link to reset your password.");
@@ -44,8 +54,8 @@ export function LoginForm({ mode }: { mode: "student" | "admin" }) {
   return (
     <form onSubmit={submit} className="space-y-4">
       <div className="space-y-1.5">
-        <Label htmlFor="email">Email</Label>
-        <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="h-12 text-base" />
+        <Label htmlFor="email">{mode === "student" ? "Email or Student ID" : "Email"}</Label>
+        <Input id="email" type={mode === "student" ? "text" : "email"} required value={email} onChange={(e) => setEmail(e.target.value)} placeholder={mode === "student" ? "Email / Student ID (e.g. SCHCBT0001)" : ""} autoCapitalize="none" className="h-12 text-base" />
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="password">Password</Label>

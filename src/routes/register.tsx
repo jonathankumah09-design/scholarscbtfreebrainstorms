@@ -54,7 +54,6 @@ function Register() {
 
   const fields: [keyof typeof f, string, string][] = [
     ["full_name", "Full Name", "text"],
-    ["student_id", "Student ID", "text"],
     ["phone", "Phone Number", "tel"],
     ["email", "Email", "email"],
     ["password", "Password", "password"],
