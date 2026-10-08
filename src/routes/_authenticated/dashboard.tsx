@@ -13,6 +13,14 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
 });
 
+const SPARKS = [
+  "Your brain grows stronger every time you solve a hard question.",
+  "Teach a topic to a friend — explaining is the fastest way to remember.",
+  "Short, daily practice beats one long night of cramming.",
+  "Mistakes are lessons: read every correction and explanation.",
+  "Sleep well before exams — memory is built while you rest.",
+  "Curiosity is a scholar's superpower. Ask 'why?' today.",
+];
 function Dashboard() {
   const { data: me } = useMe();
   const { data: settings } = useSettings();
@@ -58,6 +66,15 @@ function Dashboard() {
         </div>
       </div>
 
+      <div className="relative mt-4 overflow-hidden rounded-2xl text-primary-foreground shadow-sm">
+        <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1200&q=70" alt="Science laboratory" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/95 to-primary/50" />
+        <div className="relative p-5">
+          <p className="text-xs font-bold uppercase tracking-widest opacity-80">Brain Spark</p>
+          <p className="mt-1 max-w-lg font-display text-lg font-bold">{SPARKS[new Date().getDate() % SPARKS.length]}</p>
+        </div>
+      </div>
+
       <Announcements />
 
       <div className="mt-2 grid gap-6 lg:grid-cols-[1fr_300px]">
@@ -83,7 +100,8 @@ function Dashboard() {
         </div>
 
         <aside className="space-y-4 lg:pt-8">
-          <Link to="/syllabus" className="block rounded-2xl border bg-card p-4 hover:bg-muted">
+          <Link to="/syllabus" className="block overflow-hidden rounded-2xl border bg-card p-4 transition hover:bg-muted">
+            <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=600&q=70" alt="Books and study" loading="lazy" className="-mx-4 -mt-4 mb-3 h-28 w-[calc(100%+2rem)] max-w-none object-cover" />
             <p className="flex items-center gap-2 font-bold"><BookOpen className="h-5 w-5 text-primary" />SS1–SS3 Study Topics</p>
             <p className="mt-1 text-sm text-muted-foreground">Track the topics you have studied.</p>
             <p className="mt-2 text-sm font-bold text-primary">Open syllabus →</p>

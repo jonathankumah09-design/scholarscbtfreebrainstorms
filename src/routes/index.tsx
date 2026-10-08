@@ -17,30 +17,33 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
+const U = (id: string, w = 600) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=70`;
+const HERO = U("1481627834876-b7833e8f5570", 1600);
+
 const features = [
-  { icon: Laptop, t: "Online CBT", d: "Take tests on any phone, tablet or computer." },
-  { icon: Zap, t: "Instant Results", d: "See your score and grade the moment you submit." },
-  { icon: MousePointerClick, t: "Easy Testing", d: "One question at a time, flag and review before submitting." },
-  { icon: LineChart, t: "Student Progress", d: "Every result is saved so you can track how you improve." },
-  { icon: ShieldCheck, t: "Secure Platform", d: "Your answers and results are private to you." },
+  { icon: Laptop, img: U("1588072432836-e10032774350"), t: "Online CBT", d: "Take tests on any phone, tablet or computer." },
+  { icon: Zap, img: U("1551288049-bebda4e38f71"), t: "Instant Results", d: "See your score and grade the moment you submit." },
+  { icon: MousePointerClick, img: U("1434030216411-0b793f4b4173"), t: "Easy Testing", d: "One question at a time, flag and review before submitting." },
+  { icon: LineChart, img: U("1522202176988-66273c2fd55f"), t: "Scholar Progress", d: "Every result is saved so you can track how you improve." },
+  { icon: ShieldCheck, img: U("1563986768609-322da13575f3"), t: "Secure Platform", d: "Your answers and results are private to you." },
 ];
 
 function Home() {
   return (
     <main className="min-h-screen bg-background">
       <section className="relative overflow-hidden text-primary-foreground">
-        <img src={hall} alt="Students writing a CBT exam in a large examination hall" width={1600} height={912} className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/75 to-primary/30" />
+        <img src={HERO} alt="Scholars studying in a quiet library" width={1600} height={1000} className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-primary/40" />
         <div className="relative mx-auto max-w-5xl px-5 pb-24 pt-6">
           <div className="flex items-center gap-2">
             <GraduationCap className="h-7 w-7" />
             <span className="font-display text-lg font-extrabold tracking-wide">SCHOLARS CBT</span>
           </div>
           <div className="pt-16 sm:pt-24">
-            <p className="inline-block rounded-full bg-success px-3 py-1 text-sm font-bold text-success-foreground">Learn. Practice. Test. Succeed.</p>
-            <h1 className="mt-5 text-5xl font-extrabold leading-[1.02] sm:text-7xl">SCHOLARS CBT</h1>
+            <p className="inline-block rounded-full bg-success px-3 py-1 text-sm font-bold text-success-foreground">Scholarly Excellence · Digital Learning</p>
+            <h1 className="mt-5 max-w-3xl text-4xl font-extrabold leading-[1.05] sm:text-6xl">Where Scholars Master Every Subject</h1>
             <p className="mt-5 max-w-xl text-lg opacity-90">
-              An online CBT platform that helps students take lesson tests, practice their knowledge, and receive instant results.
+              Sharpen your mind, build real test confidence and see your results instantly — the SCHOLARS way.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg" className="h-14 bg-success px-8 text-lg text-success-foreground hover:bg-success/90">
@@ -53,12 +56,17 @@ function Home() {
           </div>
         </div>
       </section>
-      <section className="mx-auto -mt-10 grid max-w-5xl gap-4 px-5 pb-16 sm:grid-cols-2 lg:grid-cols-5">
+      <section className="mx-auto -mt-10 grid max-w-5xl grid-cols-2 gap-3 px-5 pb-16 sm:grid-cols-3 lg:grid-cols-5">
         {features.map((f, i) => (
-          <div key={f.t} style={{ animationDelay: `${i * 0.1}s` }} className="animate-float-up rounded-2xl border bg-card/95 p-5 shadow-sm backdrop-blur transition hover:-translate-y-1 hover:shadow-lg">
-            <span style={{ animationDelay: `${i * 0.5}s` }} className="animate-glow flex h-11 w-11 items-center justify-center rounded-xl bg-success text-success-foreground"><f.icon className="h-5 w-5" /></span>
-            <p className="mt-3 font-display font-bold">{f.t}</p>
-            <p className="mt-1 text-sm text-muted-foreground">{f.d}</p>
+          <div key={f.t} style={{ animationDelay: `${i * 0.1}s` }} className="animate-float-up overflow-hidden rounded-2xl border bg-card/95 shadow-sm backdrop-blur transition duration-300 hover:-translate-y-1 hover:shadow-lg">
+            <div className="relative aspect-[4/3]">
+              <img src={f.img} alt={f.t} loading="lazy" className="h-full w-full object-cover" />
+              <span style={{ animationDelay: `${i * 0.5}s` }} className="animate-glow absolute bottom-2 left-2 flex h-8 w-8 items-center justify-center rounded-lg bg-success text-success-foreground"><f.icon className="h-4 w-4" /></span>
+            </div>
+            <div className="p-3">
+              <p className="font-display text-sm font-bold">{f.t}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{f.d}</p>
+            </div>
           </div>
         ))}
       </section>
