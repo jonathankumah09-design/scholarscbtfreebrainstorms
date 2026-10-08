@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { ExternalLink } from "lucide-react";
 import { Atom, Cpu, Dna, Rocket, Zap } from "lucide-react";
 import { StudentShell } from "@/components/StudentShell";
 import { cn } from "@/lib/utils";
@@ -32,7 +34,9 @@ function Science() {
     <StudentShell>
       <h1 className="text-3xl font-extrabold">Global Science</h1>
       <p className="mt-1 text-muted-foreground">Real discoveries from NASA, CERN, energy, biotech and AI — linked to what you study.</p>
-      <div className="mt-5 flex flex-wrap gap-2">
+      <LiveFeed />
+      <h2 className="mt-8 text-xl font-extrabold">Discoveries linked to your syllabus</h2>
+      <div className="mt-3 flex flex-wrap gap-2">
         {SUBS.map((s) => <button key={s} onClick={() => setF(s)} className={cn("rounded-full border px-4 py-2 text-sm font-bold", s === f ? "bg-primary text-primary-foreground" : "bg-card hover:bg-muted")}>{s}</button>)}
       </div>
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -49,5 +53,46 @@ function Science() {
         ))}
       </div>
     </StudentShell>
+  );
+}
+
+type News = { id: number; title: string; url: string; image_url: string; news_site: string; summary: string; published_at: string };
+
+function LiveFeed() {
+  const { data, isLoading } = useQuery({
+    queryKey: ["science-live"],
+    queryFn: async () => {
+      const r = await fetch("https://api.spaceflightnewsapi.net/v4/articles/?limit=6");
+      if (!r.ok) return [] as News[];
+      return ((await r.json()).results ?? []) as News[];
+    },
+    staleTime: 10 * 60 * 1000,
+    refetchInterval: 15 * 60 * 1000,
+  });
+  return (
+    <section className="mt-6">
+      <div className="flex items-center gap-2">
+        <span className="relative flex h-2.5 w-2.5"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" /><span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-destructive" /></span>
+        <h2 className="text-xl font-extrabold">Happening now in science</h2>
+      </div>
+      <p className="text-sm text-muted-foreground">Live news from NASA, ESA and space agencies — updates automatically.</p>
+      {isLoading ? <p className="mt-3 text-sm text-muted-foreground">Loading latest news...</p> : (
+        <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {(data ?? []).map((n) => (
+            <a key={n.id} href={n.url} target="_blank" rel="noreferrer" className="group overflow-hidden rounded-2xl border bg-card shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+              <div className="aspect-video overflow-hidden bg-muted">
+                <img src={n.image_url} alt={n.title} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+              </div>
+              <div className="p-3.5">
+                <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">{n.news_site} · {new Date(n.published_at).toLocaleDateString([], { dateStyle: "medium" })}</p>
+                <h3 className="mt-1 line-clamp-2 font-bold leading-snug">{n.title}</h3>
+                <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{n.summary}</p>
+                <span className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-primary">Read more <ExternalLink className="h-3 w-3" /></span>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
