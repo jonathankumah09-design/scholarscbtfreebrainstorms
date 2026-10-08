@@ -35,11 +35,11 @@ export function StudentShell({ children }: { children: ReactNode }) {
 
   const side = (
     <div className="flex h-full flex-col">
-      <Link to="/dashboard" className="flex items-center gap-2 px-5 py-5" onClick={() => setOpen(false)}>
-        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground"><GraduationCap className="h-5 w-5" /></span>
+      <Link to="/dashboard" className="flex items-center gap-3 px-5 py-5" onClick={() => setOpen(false)}>
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sidebar-primary text-sidebar-primary-foreground"><GraduationCap className="h-7 w-7" /></span>
         <span className="leading-tight">
-          <span className="block font-display font-extrabold tracking-wide">SCHOLARS CBT</span>
-          <span className="block text-[10px] uppercase tracking-widest opacity-70">Student Portal</span>
+          <span className="block font-display text-lg font-extrabold tracking-wide">SCHOLARS CBT</span>
+          <span className="block text-[10px] font-bold uppercase tracking-[0.22em] opacity-70">Student Portal</span>
         </span>
       </Link>
       <div className="mx-4 mb-3 flex items-center gap-3 rounded-xl bg-sidebar-accent p-3">
@@ -70,7 +70,7 @@ export function StudentShell({ children }: { children: ReactNode }) {
       <aside className="relative z-20 hidden bg-sidebar text-sidebar-foreground lg:sticky lg:top-0 lg:block lg:h-screen lg:w-64 lg:shrink-0">{side}</aside>
 
       <header className="sticky top-0 z-20 flex items-center justify-between bg-sidebar px-4 py-3 text-sidebar-foreground lg:hidden">
-        <Link to="/dashboard" className="flex items-center gap-2 font-display font-extrabold"><GraduationCap className="h-5 w-5" />SCHOLARS CBT</Link>
+        <Link to="/dashboard" className="flex items-center gap-2.5 font-display text-lg font-extrabold"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-sidebar-accent"><GraduationCap className="h-5 w-5" /></span>SCHOLARS CBT</Link>
         <button aria-label="Open menu" onClick={() => setOpen(true)} className="rounded-lg p-2 hover:bg-sidebar-accent"><Menu className="h-5 w-5" /></button>
       </header>
       <div className={cn("fixed inset-0 z-30 lg:hidden", open ? "" : "pointer-events-none")}>

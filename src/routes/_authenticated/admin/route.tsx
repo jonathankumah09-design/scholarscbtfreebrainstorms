@@ -41,9 +41,12 @@ function AdminLayout() {
     <div className="relative min-h-screen bg-background md:flex">
       <HallWatermark />
       <aside className="relative z-10 bg-sidebar text-sidebar-foreground md:sticky md:top-0 md:h-screen md:w-60 md:shrink-0">
-        <div className="px-4 py-4">
-          <p className="text-xs uppercase tracking-widest opacity-70">Admin</p>
-          <p className="font-display text-lg font-extrabold">SCHOLARS CBT</p>
+        <div className="flex items-center gap-3 px-4 py-4">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-sidebar-primary text-sidebar-primary-foreground"><GraduationCap className="h-6 w-6" /></span>
+          <span className="leading-tight">
+            <p className="text-[10px] font-bold uppercase tracking-[0.22em] opacity-70">Admin</p>
+            <p className="font-display text-xl font-extrabold tracking-wide">SCHOLARS CBT</p>
+          </span>
         </div>
         <nav className="flex gap-1 overflow-x-auto px-2 pb-3 md:flex-col md:overflow-visible">
           <NotificationBell />
