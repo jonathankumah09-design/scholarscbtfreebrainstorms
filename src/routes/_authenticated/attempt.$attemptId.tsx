@@ -160,7 +160,7 @@ function Runner({ data }: { data: AttemptData }) {
   );
 
   return (
-    <div className="min-h-screen bg-background pb-6">
+    <div className="min-h-screen pb-6">
       <Calculator />
       <header className="sticky top-0 z-10 border-b bg-card/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5">
