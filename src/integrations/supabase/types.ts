@@ -259,6 +259,7 @@ export type Database = {
         Row: {
           correct_answer: string
           created_at: string
+          explanation: string
           id: string
           marks: number
           options: Json
@@ -271,6 +272,7 @@ export type Database = {
         Insert: {
           correct_answer?: string
           created_at?: string
+          explanation?: string
           id?: string
           marks?: number
           options?: Json
@@ -283,6 +285,7 @@ export type Database = {
         Update: {
           correct_answer?: string
           created_at?: string
+          explanation?: string
           id?: string
           marks?: number
           options?: Json
@@ -515,6 +518,20 @@ export type Database = {
         }
         Returns: boolean
       }
+      leaderboard: {
+        Args: { _test_id?: string }
+        Returns: {
+          class: string
+          full_name: string
+          is_me: boolean
+          percent: number
+          student_id: string
+          tests_taken: number
+          total_marks: number
+          total_score: number
+        }[]
+      }
+      log_student_login: { Args: never; Returns: undefined }
       my_corrections: { Args: { _attempt_id: string }; Returns: Json }
       my_results: {
         Args: never
