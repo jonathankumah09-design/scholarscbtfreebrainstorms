@@ -1,4 +1,3 @@
-
 create type public.app_role as enum ('admin', 'student');
 
 create table public.profiles (
@@ -103,7 +102,6 @@ grant all on public.attempts to service_role;
 alter table public.attempts enable row level security;
 create policy "own or admin attempts" on public.attempts for select to authenticated using (student_id = auth.uid() or public.has_role(auth.uid(),'admin'));
 
--- signup trigger
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer set search_path = public as $$
 begin
@@ -118,7 +116,6 @@ begin
 end $$;
 create trigger on_auth_user_created after insert on auth.users for each row execute function public.handle_new_user();
 
--- one-time admin claim
 create or replace function public.admin_exists()
 returns boolean language sql stable security definer set search_path = public as $$
   select exists (select 1 from public.user_roles where role = 'admin')
@@ -139,7 +136,6 @@ begin
 end $$;
 grant execute on function public.claim_admin() to authenticated;
 
--- tests visible to a student
 create or replace function public.student_tests()
 returns table (id uuid, title text, subject text, class text, instructions text, duration_minutes int,
   pass_percentage int, start_at timestamptz, end_at timestamptz, question_count bigint, total_marks numeric)
@@ -155,7 +151,6 @@ language sql stable security definer set search_path = public as $$
 $$;
 grant execute on function public.student_tests() to authenticated;
 
--- grading
 create or replace function public.recalc_attempt(_attempt_id uuid)
 returns void language plpgsql security definer set search_path = public as $$
 declare a attempts; q record; ans text; s numeric := 0; tot numeric := 0; c int := 0; w int := 0; u int := 0; pend boolean := false; ok boolean;

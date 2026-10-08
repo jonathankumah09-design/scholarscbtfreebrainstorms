@@ -1,4 +1,3 @@
-
 alter table public.profiles add column phone text not null default '';
 alter table public.tests add column attempts_allowed int not null default 1;
 alter table public.app_settings add column grade_scale jsonb not null default '[{"grade":"A","min":90},{"grade":"B","min":80},{"grade":"C","min":70},{"grade":"D","min":60},{"grade":"E","min":50},{"grade":"F","min":0}]'::jsonb;
