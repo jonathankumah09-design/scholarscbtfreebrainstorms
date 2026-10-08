@@ -172,6 +172,42 @@ export type Database = {
           },
         ]
       }
+      bank_questions: {
+        Row: {
+          correct_answer: string
+          created_at: string
+          explanation: string
+          id: string
+          marks: number
+          options: Json
+          subject: string
+          text: string
+          type: string
+        }
+        Insert: {
+          correct_answer?: string
+          created_at?: string
+          explanation?: string
+          id?: string
+          marks?: number
+          options?: Json
+          subject: string
+          text: string
+          type?: string
+        }
+        Update: {
+          correct_answer?: string
+          created_at?: string
+          explanation?: string
+          id?: string
+          marks?: number
+          options?: Json
+          subject?: string
+          text?: string
+          type?: string
+        }
+        Relationships: []
+      }
       classes: {
         Row: {
           created_at: string

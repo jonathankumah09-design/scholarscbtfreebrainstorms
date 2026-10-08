@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const SAMPLE = sampleText();
 
-export function ImportQuestions({ testId, position, onDone, subject = "" }: { testId: string; position: number; onDone: () => void; subject?: string }) {
+export function ImportQuestions({ testId, position, onDone, subject = "", bank = false }: { bank?: boolean; testId: string; position: number; onDone: () => void; subject?: string }) {
   const [open, setOpen] = useState(false);
   const [raw, setRaw] = useState("");
   const [file, setFile] = useState("");
@@ -57,11 +57,16 @@ export function ImportQuestions({ testId, position, onDone, subject = "" }: { te
     let pos = position;
     let done = 0;
     for (let i = 0; i < parsed.length; i += 100) {
-      const chunk = parsed.slice(i, i + 100).map((q) => ({
-        test_id: testId, type: q.type, text: q.text, options: q.options,
-        correct_answer: q.correct_answer, marks: q.marks, position: pos++, subject,
-      }));
-      const { error } = await supabase.from("questions").insert(chunk);
+      const slice = parsed.slice(i, i + 100);
+      const { error } = bank
+        ? await supabase.from("bank_questions").insert(slice.map((q) => ({
+            type: q.type, text: q.text, options: q.options, correct_answer: q.correct_answer, marks: q.marks, subject, explanation: q.explanation ?? "",
+          })))
+        : await supabase.from("questions").insert(slice.map((q) => ({
+            test_id: testId, type: q.type, text: q.text, options: q.options,
+            correct_answer: q.correct_answer, marks: q.marks, position: pos++, subject, explanation: q.explanation ?? "",
+          })));
+      const chunk = slice;
       if (error) { toast.error(`Stopped after ${done}: ${error.message}`); setBusy(false); return; }
       done += chunk.length;
       setAdded(done);
@@ -82,7 +87,7 @@ export function ImportQuestions({ testId, position, onDone, subject = "" }: { te
         <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-3xl">
           <DialogHeader>
             <DialogTitle>Import questions</DialogTitle>
-            <DialogDescription>Paste your questions or upload a Word (.docx) or text (.txt) file. One question per block: the question, then options A, B, C… then the correct answer.</DialogDescription>
+            <DialogDescription>Paste your questions or upload a Word (.docx) or text (.txt) file. One question per block: the question, then options A, B, C… then the correct answer, then an optional Explanation: line.</DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -137,7 +142,8 @@ export function ImportQuestions({ testId, position, onDone, subject = "" }: { te
                     <p className="text-xs font-bold uppercase text-muted-foreground">{i + 1} · {q.type === "mcq" ? "Multiple choice" : q.type === "true_false" ? "True/False" : "Short answer"} · {q.marks} mark{q.marks === 1 ? "" : "s"}</p>
                     <p className="mt-0.5 font-bold">{q.text}</p>
                     {q.options.length > 0 && <p className="mt-0.5 text-sm">{q.options.map((o, j) => `${String.fromCharCode(65 + j)}. ${o}`).join("   ")}</p>}
-                    <p className="mt-0.5 text-sm text-success">Correct: {q.type === "short" ? q.correct_answer : q.correct_answer}</p>
+                    <p className="mt-0.5 text-sm text-success">Correct: {q.correct_answer}</p>
+                    {q.explanation && <p className="mt-0.5 whitespace-pre-line text-sm text-muted-foreground">Explanation: {q.explanation}</p>}
                   </div>
                 ))}
               </div>
