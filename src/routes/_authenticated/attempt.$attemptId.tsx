@@ -144,10 +144,10 @@ function Runner({ data }: { data: AttemptData }) {
           ))}
         </div>
       )}
-      <div className="mt-3 grid grid-cols-6 gap-1.5 sm:grid-cols-8 lg:grid-cols-5">
+      <div className="mt-3 grid grid-cols-10 gap-1 sm:grid-cols-10 lg:grid-cols-6">
         {qs.map((x, i) => (subjects.length > 1 && x.subject !== q?.subject) ? null : (
           <button key={x.id} onClick={() => setIdx(i)} aria-label={`Question ${i + 1}`}
-            className={cn("aspect-square rounded-lg border text-sm font-bold transition",
+            className={cn("aspect-square rounded-md border text-[11px] font-bold transition sm:text-xs",
               i === idx ? "border-primary bg-primary text-primary-foreground ring-2 ring-primary/30" : flags[x.id] ? "border-warning bg-warning text-warning-foreground" : (answers[x.id] ?? "").trim() ? "border-success bg-success text-success-foreground" : "border-border bg-muted text-muted-foreground hover:border-primary/50")}>
             {i + 1}
           </button>
@@ -183,22 +183,22 @@ function Runner({ data }: { data: AttemptData }) {
 
         <main className="order-1 min-w-0 lg:order-2">
           {q ? (
-            <div className="rounded-2xl border bg-card p-5 shadow-sm sm:p-7">
+            <div className="rounded-2xl border bg-card p-3.5 shadow-sm sm:p-6">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="rounded-full bg-primary/10 px-3 py-1 text-xs font-extrabold uppercase tracking-wide text-primary">{q.subject ? `${q.subject} · ` : ""}Question {idx + 1} of {qs.length}</p>
                 <p className="text-xs font-bold text-muted-foreground">{q.marks} mark{Number(q.marks) === 1 ? "" : "s"}</p>
               </div>
-              <h2 className="mt-4 whitespace-pre-wrap font-sans text-xl font-bold leading-snug tracking-normal sm:text-2xl">{q.text}</h2>
-              <div className={cn("mt-6 grid gap-3", (q.type === "mcq" || q.type === "true_false") && "sm:grid-cols-2")}>
+              <h2 className="mt-3 whitespace-pre-wrap font-sans text-base font-bold leading-snug tracking-normal sm:text-xl">{q.text}</h2>
+              <div className={cn("mt-4 grid gap-2", (q.type === "mcq" || q.type === "true_false") && "sm:grid-cols-2")}>
                 {(q.type === "mcq" || q.type === "true_false") && opts.map((o, i) => {
                   const sel = answers[q.id] === o.value;
                   return (
                     <button key={o.value} onClick={() => setA(o.value)}
-                      className={cn("group flex min-h-20 w-full items-center gap-4 rounded-2xl border-2 p-4 text-left text-base font-medium transition",
+                      className={cn("group flex min-h-11 w-full items-center gap-2.5 rounded-xl border-2 px-2.5 py-2 text-left text-sm font-medium transition sm:min-h-14 sm:gap-3 sm:p-3 sm:text-base",
                         sel ? "border-primary bg-primary/10 shadow-md" : "border-border bg-background hover:-translate-y-0.5 hover:border-primary/50 hover:shadow")}>
-                      <span className={cn("flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-2 font-display text-xl font-extrabold",
+                      <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border-2 font-display text-sm font-extrabold sm:h-9 sm:w-9 sm:text-base",
                         sel ? "border-primary bg-primary text-primary-foreground" : "border-input bg-muted group-hover:border-primary/50")}>
-                        {sel ? <Check className="h-6 w-6" /> : q.type === "mcq" ? String.fromCharCode(65 + i) : i === 0 ? "T" : "F"}
+                        {sel ? <Check className="h-4 w-4" /> : q.type === "mcq" ? String.fromCharCode(65 + i) : i === 0 ? "T" : "F"}
                       </span>
                       <span>{o.text}</span>
                     </button>
