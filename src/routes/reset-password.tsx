@@ -29,12 +29,12 @@ function ResetPassword() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (pw.length < 6) return toast.error("Password must be at least 6 characters.");
-    if (pw !== pw2) return toast.error("Passwords do not match.");
+    if (pw.length < 6) { toast.error("Password must be at least 6 characters."); return; }
+    if (pw !== pw2) { toast.error("Passwords do not match."); return; }
     setBusy(true);
     const { error } = await supabase.auth.updateUser({ password: pw });
     setBusy(false);
-    if (error) return toast.error(error.message.includes("session") ? "This reset link has expired. Request a new one from the login page." : error.message);
+    if (error) { toast.error(error.message.includes("session") ? "This reset link has expired. Request a new one from the login page." : error.message); return; }
     toast.success("Password updated. You are now signed in.");
     navigate({ to: "/dashboard" });
   }
