@@ -62,7 +62,7 @@ export function NotificationBell() {
               params={{ attemptId: n.attempt_id ?? "" }} onClick={() => setOpen(false)}
               className={cn("block border-b p-3 text-sm hover:bg-muted", !n.is_read && "bg-primary/5")}>
               <p className={cn("font-bold", (n.kind === "tab_switch" || n.kind === "camera_off") && "text-destructive")}>{n.title}</p>
-              {n.body && <p className="text-muted-foreground">{n.body}</p>}
+              {n.body && <p className="text-muted-foreground">{n.body.replace(/\s*·?\s*id:[0-9a-f-]+$/, "")}</p>}
               <p className="text-xs text-muted-foreground">{new Date(n.created_at).toLocaleString()}</p>
             </Link>
           ))}
