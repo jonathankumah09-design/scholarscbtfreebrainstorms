@@ -160,7 +160,7 @@ function Runner({ data }: { data: AttemptData }) {
   );
 
   return (
-    <div className="min-h-screen bg-background pb-24 lg:pb-6">
+    <div className="min-h-screen bg-background pb-6">
       <Calculator />
       <header className="sticky top-0 z-10 border-b bg-card/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5">
@@ -215,8 +215,8 @@ function Runner({ data }: { data: AttemptData }) {
                   <Eraser className="mr-1 h-4 w-4" />Clear Answer
                 </Button>
               </div>
-              <div className="mt-6 hidden gap-2 border-t pt-5 lg:flex">
-                <Button variant="outline" className="h-12 flex-1" disabled={idx === 0} onClick={() => setIdx(idx - 1)}>← Previous</Button>
+              <div className="mt-6 flex flex-wrap gap-2 border-t pt-5">
+                <Button variant="outline" className="h-12 min-w-[30%] flex-1" disabled={idx === 0} onClick={() => setIdx(idx - 1)}>← Previous</Button>
                 {idx < qs.length - 1 && <Button className="h-12 flex-1" onClick={() => setIdx(idx + 1)}>Next →</Button>}
                 <Button className="h-12 flex-1 bg-success text-success-foreground hover:bg-success/90" onClick={() => setConfirm(true)}>Submit Exam</Button>
               </div>
@@ -225,25 +225,16 @@ function Runner({ data }: { data: AttemptData }) {
         </main>
 
         <aside className="order-first space-y-3 lg:order-3 lg:sticky lg:top-24 lg:self-start">
-          <CameraMonitor className="mx-auto max-w-[200px] lg:max-w-none" />
-          <div className="hidden grid-cols-3 gap-2 text-center lg:grid">
+          <CameraMonitor className="mx-auto max-w-[160px] lg:max-w-none" />
+          <div className="grid grid-cols-3 gap-2 text-center">
             <MiniStat n={answered} l="Done" c="bg-success/15" />
             <MiniStat n={qs.length - answered} l="Left" c="bg-destructive/10" />
             <MiniStat n={flaggedCount} l="Flagged" c="bg-warning/25" />
           </div>
-          <p className="hidden rounded-xl bg-muted p-3 text-xs text-muted-foreground lg:block">Keep your face in view. Do not switch tabs — every switch is reported to your supervisor.</p>
+          <p className="rounded-xl bg-muted p-3 text-xs text-muted-foreground">Keep your face in view. Do not switch tabs — every switch is reported to your supervisor.</p>
         </aside>
       </div>
 
-      <footer className="fixed inset-x-0 bottom-0 border-t bg-card lg:hidden">
-        <div className="mx-auto flex max-w-3xl gap-2 px-4 py-3">
-          <Button variant="outline" className="h-12 flex-1" disabled={idx === 0} onClick={() => setIdx(idx - 1)}>Previous</Button>
-          {idx < qs.length - 1 ? (
-            <Button className="h-12 flex-1" onClick={() => setIdx(idx + 1)}>Next</Button>
-          ) : null}
-          <Button className="h-12 flex-1 bg-success text-success-foreground hover:bg-success/90" onClick={() => setConfirm(true)}>Submit</Button>
-        </div>
-      </footer>
 
       <AlertDialog open={confirm} onOpenChange={setConfirm}>
         <AlertDialogContent>

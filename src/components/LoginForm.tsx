@@ -33,6 +33,14 @@ export function LoginForm({ mode }: { mode: "student" | "admin" }) {
     navigate({ to: admin ? "/admin" : "/dashboard" });
   }
 
+  async function forgot() {
+    const addr = email.trim();
+    if (!addr) { toast.error("Type your email above first, then tap Forgot password."); return; }
+    const { error } = await supabase.auth.resetPasswordForEmail(addr, { redirectTo: `${window.location.origin}/reset-password` });
+    if (error) { toast.error(error.message); return; }
+    toast.success("Check your email for a link to reset your password.");
+  }
+
   return (
     <form onSubmit={submit} className="space-y-4">
       <div className="space-y-1.5">
@@ -42,6 +50,9 @@ export function LoginForm({ mode }: { mode: "student" | "admin" }) {
       <div className="space-y-1.5">
         <Label htmlFor="password">Password</Label>
         <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="h-12 text-base" />
+        {mode === "student" && (
+          <button type="button" onClick={forgot} className="text-sm font-bold text-primary hover:underline">Forgot password?</button>
+        )}
       </div>
       <Button type="submit" disabled={busy || !hydrated} className="h-12 w-full text-base">
         {busy ? "Signing in..." : "Log In"}
