@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Camera, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,28 @@ function pickMime() {
   if (typeof MediaRecorder === "undefined") return "";
   for (const m of ["video/webm;codecs=vp8", "video/webm", "video/mp4"]) if (MediaRecorder.isTypeSupported(m)) return m;
   return "";
+}
+
+type ProctorState = { stream: MediaStream | null; switches: number };
+const ProctorCtx = createContext<ProctorState>({ stream: null, switches: 0 });
+
+/** Live camera tile that mirrors the proctor stream. Place it anywhere inside <Proctor>. */
+export function CameraMonitor({ className = "" }: { className?: string }) {
+  const { stream, switches } = useContext(ProctorCtx);
+  const ref = useRef<HTMLVideoElement>(null);
+  useEffect(() => { if (ref.current && stream) { ref.current.srcObject = stream; void ref.current.play().catch(() => {}); } }, [stream]);
+  return (
+    <div className={"overflow-hidden rounded-2xl border-2 border-primary/40 bg-card shadow-sm " + className}>
+      <div className="relative aspect-[4/3] bg-muted">
+        <video ref={ref} muted playsInline className="h-full w-full -scale-x-100 object-cover" />
+        <span className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-destructive px-2 py-0.5 text-[10px] font-bold text-destructive-foreground"><span className="h-2 w-2 animate-pulse rounded-full bg-destructive-foreground" />REC</span>
+      </div>
+      <div className="flex items-center justify-between px-3 py-2 text-xs">
+        <span className="flex items-center gap-1 font-bold"><Camera className="h-3.5 w-3.5 text-primary" />Live Monitor</span>
+        {switches > 0 ? <span className="flex items-center gap-1 font-bold text-destructive"><AlertTriangle className="h-3 w-3" />{switches} tab switch{switches === 1 ? "" : "es"}</span> : <span className="text-success font-bold">All clear</span>}
+      </div>
+    </div>
+  );
 }
 
 /** Blocks the exam until the camera is on, then takes periodic snapshots and logs tab switches. */
@@ -133,17 +155,10 @@ export function Proctor({ attemptId, studentId, children }: { attemptId: string;
   }
 
   return (
-    <>
+    <ProctorCtx.Provider value={{ stream: streamRef.current, switches }}>
       {children}
-      <div className="fixed bottom-24 right-3 z-20 overflow-hidden rounded-xl border-2 border-primary bg-card shadow-lg">
-        <video ref={videoRef} muted playsInline className="h-24 w-32 -scale-x-100 object-cover" />
-        {switches > 0 && (
-          <p className="flex items-center gap-1 bg-destructive px-2 py-0.5 text-[10px] font-bold text-destructive-foreground">
-            <AlertTriangle className="h-3 w-3" />{switches} tab switch{switches === 1 ? "" : "es"}
-          </p>
-        )}
-      </div>
-    </>
+      <video ref={videoRef} muted playsInline aria-hidden className="pointer-events-none fixed bottom-0 right-0 h-px w-px opacity-0" />
+    </ProctorCtx.Provider>
   );
 }
 
