@@ -16,7 +16,12 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as StaffRouteImport } from './routes/staff'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedExamsRouteImport } from './routes/_authenticated/exams'
 import { Route as AuthenticatedLeaderboardRouteImport } from './routes/_authenticated/leaderboard'
+import { Route as AuthenticatedPracticeRouteImport } from './routes/_authenticated/practice'
+import { Route as AuthenticatedResultsRouteImport } from './routes/_authenticated/results'
+import { Route as AuthenticatedScienceRouteImport } from './routes/_authenticated/science'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedSyllabusRouteImport } from './routes/_authenticated/syllabus'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdminActivityRouteImport } from './routes/_authenticated/admin/activity'
@@ -69,12 +74,37 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedExamsRoute = AuthenticatedExamsRouteImport.update({
+  id: '/exams',
+  path: '/exams',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedLeaderboardRoute =
   AuthenticatedLeaderboardRouteImport.update({
     id: '/leaderboard',
     path: '/leaderboard',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPracticeRoute = AuthenticatedPracticeRouteImport.update({
+  id: '/practice',
+  path: '/practice',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedResultsRoute = AuthenticatedResultsRouteImport.update({
+  id: '/results',
+  path: '/results',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedScienceRoute = AuthenticatedScienceRouteImport.update({
+  id: '/science',
+  path: '/science',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSyllabusRoute = AuthenticatedSyllabusRouteImport.update({
   id: '/syllabus',
   path: '/syllabus',
@@ -180,7 +210,12 @@ export interface FileRoutesByFullPath {
   '/staff': typeof StaffRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/exams': typeof AuthenticatedExamsRoute
   '/leaderboard': typeof AuthenticatedLeaderboardRoute
+  '/practice': typeof AuthenticatedPracticeRoute
+  '/results': typeof AuthenticatedResultsRoute
+  '/science': typeof AuthenticatedScienceRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/syllabus': typeof AuthenticatedSyllabusRoute
   '/admin/activity': typeof AuthenticatedAdminActivityRoute
   '/admin/live': typeof AuthenticatedAdminLiveRoute
@@ -205,7 +240,12 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/staff': typeof StaffRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/exams': typeof AuthenticatedExamsRoute
   '/leaderboard': typeof AuthenticatedLeaderboardRoute
+  '/practice': typeof AuthenticatedPracticeRoute
+  '/results': typeof AuthenticatedResultsRoute
+  '/science': typeof AuthenticatedScienceRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/syllabus': typeof AuthenticatedSyllabusRoute
   '/admin/activity': typeof AuthenticatedAdminActivityRoute
   '/admin/live': typeof AuthenticatedAdminLiveRoute
@@ -233,7 +273,12 @@ export interface FileRoutesById {
   '/staff': typeof StaffRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/exams': typeof AuthenticatedExamsRoute
   '/_authenticated/leaderboard': typeof AuthenticatedLeaderboardRoute
+  '/_authenticated/practice': typeof AuthenticatedPracticeRoute
+  '/_authenticated/results': typeof AuthenticatedResultsRoute
+  '/_authenticated/science': typeof AuthenticatedScienceRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/syllabus': typeof AuthenticatedSyllabusRoute
   '/_authenticated/admin/activity': typeof AuthenticatedAdminActivityRoute
   '/_authenticated/admin/live': typeof AuthenticatedAdminLiveRoute
@@ -261,7 +306,12 @@ export interface FileRouteTypes {
     | '/staff'
     | '/admin'
     | '/dashboard'
+    | '/exams'
     | '/leaderboard'
+    | '/practice'
+    | '/results'
+    | '/science'
+    | '/settings'
     | '/syllabus'
     | '/admin/activity'
     | '/admin/live'
@@ -286,7 +336,12 @@ export interface FileRouteTypes {
     | '/register'
     | '/staff'
     | '/dashboard'
+    | '/exams'
     | '/leaderboard'
+    | '/practice'
+    | '/results'
+    | '/science'
+    | '/settings'
     | '/syllabus'
     | '/admin/activity'
     | '/admin/live'
@@ -313,7 +368,12 @@ export interface FileRouteTypes {
     | '/staff'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
+    | '/_authenticated/exams'
     | '/_authenticated/leaderboard'
+    | '/_authenticated/practice'
+    | '/_authenticated/results'
+    | '/_authenticated/science'
+    | '/_authenticated/settings'
     | '/_authenticated/syllabus'
     | '/_authenticated/admin/activity'
     | '/_authenticated/admin/live'
@@ -392,11 +452,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/exams': {
+      id: '/_authenticated/exams'
+      path: '/exams'
+      fullPath: '/exams'
+      preLoaderRoute: typeof AuthenticatedExamsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/leaderboard': {
       id: '/_authenticated/leaderboard'
       path: '/leaderboard'
       fullPath: '/leaderboard'
       preLoaderRoute: typeof AuthenticatedLeaderboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/practice': {
+      id: '/_authenticated/practice'
+      path: '/practice'
+      fullPath: '/practice'
+      preLoaderRoute: typeof AuthenticatedPracticeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/results': {
+      id: '/_authenticated/results'
+      path: '/results'
+      fullPath: '/results'
+      preLoaderRoute: typeof AuthenticatedResultsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/science': {
+      id: '/_authenticated/science'
+      path: '/science'
+      fullPath: '/science'
+      preLoaderRoute: typeof AuthenticatedScienceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/syllabus': {
@@ -563,7 +658,12 @@ const AuthenticatedAdminRouteRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedExamsRoute: typeof AuthenticatedExamsRoute
   AuthenticatedLeaderboardRoute: typeof AuthenticatedLeaderboardRoute
+  AuthenticatedPracticeRoute: typeof AuthenticatedPracticeRoute
+  AuthenticatedResultsRoute: typeof AuthenticatedResultsRoute
+  AuthenticatedScienceRoute: typeof AuthenticatedScienceRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedSyllabusRoute: typeof AuthenticatedSyllabusRoute
   AuthenticatedAttemptAttemptIdRoute: typeof AuthenticatedAttemptAttemptIdRoute
   AuthenticatedResultAttemptIdRoute: typeof AuthenticatedResultAttemptIdRoute
@@ -573,7 +673,12 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedExamsRoute: AuthenticatedExamsRoute,
   AuthenticatedLeaderboardRoute: AuthenticatedLeaderboardRoute,
+  AuthenticatedPracticeRoute: AuthenticatedPracticeRoute,
+  AuthenticatedResultsRoute: AuthenticatedResultsRoute,
+  AuthenticatedScienceRoute: AuthenticatedScienceRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedSyllabusRoute: AuthenticatedSyllabusRoute,
   AuthenticatedAttemptAttemptIdRoute: AuthenticatedAttemptAttemptIdRoute,
   AuthenticatedResultAttemptIdRoute: AuthenticatedResultAttemptIdRoute,
