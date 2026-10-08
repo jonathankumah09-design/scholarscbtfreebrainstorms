@@ -12,8 +12,12 @@ export function GiftCard({ attemptId, children }: { attemptId: string; children:
   const [msg, setMsg] = useState("");
 
   useEffect(() => {
-    setSeen(sessionStorage.getItem(key) === "1");
-    supabase.rpc("attempt_gift_message" as never, { _attempt_id: attemptId } as never).then(({ data }) => setMsg(((data as unknown as string) ?? "").trim()));
+    supabase.rpc("attempt_gift_message", { _attempt_id: attemptId }).then(({ data }) => {
+      const m = ((data as string | null) ?? "").trim();
+      if (m === "__off__") { setSeen(true); return; }
+      setMsg(m);
+      setSeen(sessionStorage.getItem(key) === "1");
+    });
   }, [key, attemptId]);
 
   const done = () => { sessionStorage.setItem(key, "1"); setSeen(true); };

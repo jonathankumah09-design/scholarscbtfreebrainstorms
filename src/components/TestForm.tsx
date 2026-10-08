@@ -11,7 +11,7 @@ export type TestValues = {
   title: string; subject: string; class: string; instructions: string; attempts_allowed: number;
   duration_minutes: number; pass_percentage: number; start_at: string | null; end_at: string | null; show_results: boolean;
   shuffle_questions: boolean; shuffle_options: boolean; draw_count: number | null;
-  multi_subject: boolean; per_subject_count: number; show_corrections: boolean; gift_message: string;
+  multi_subject: boolean; per_subject_count: number; show_corrections: boolean; gift_message: string; gift_enabled: boolean;
 };
 
 const toLocal = (iso: string | null) => {
@@ -37,6 +37,7 @@ export function TestForm({ initial, onSubmit, submitLabel, questionCount }: { in
     per_subject_count: String(initial?.per_subject_count ?? 20),
     show_corrections: initial?.show_corrections ?? false,
     gift_message: initial?.gift_message ?? "",
+    gift_enabled: initial?.gift_enabled ?? true,
     sd: s.d, st: s.t, ed: e.d, et: e.t,
   });
   const [busy, setBusy] = useState(false);
@@ -54,7 +55,7 @@ export function TestForm({ initial, onSubmit, submitLabel, questionCount }: { in
         attempts_allowed: Math.max(1, Number(v.attempts_allowed) || 1),
         shuffle_questions: v.shuffle_questions, shuffle_options: v.shuffle_options, draw_count: drawn,
         multi_subject: v.multi_subject, per_subject_count: Math.max(1, Number(v.per_subject_count) || 20),
-        show_results: v.show_results, show_corrections: v.show_corrections, gift_message: v.gift_message.trim(), start_at: fromLocal(v.sd, v.st), end_at: fromLocal(v.ed, v.et),
+        show_results: v.show_results, show_corrections: v.show_corrections, gift_enabled: v.gift_enabled, gift_message: v.gift_message.trim(), start_at: fromLocal(v.sd, v.st), end_at: fromLocal(v.ed, v.et),
       });
       setBusy(false);
     }}>
@@ -132,10 +133,14 @@ export function TestForm({ initial, onSubmit, submitLabel, questionCount }: { in
         <Switch checked={v.show_corrections} onCheckedChange={(c) => setV((prev) => ({ ...prev, show_corrections: c }))} id="sc" />
         <Label htmlFor="sc">Let students see what they got right and wrong (with correct answers) after submitting</Label>
       </div>
-      <F label="🎁 Surprise card message (shown before the first question)" className="sm:col-span-2">
+      <div className="flex items-center gap-3 sm:col-span-2">
+        <Switch checked={v.gift_enabled} onCheckedChange={(c) => setV((prev) => ({ ...prev, gift_enabled: c }))} id="ge" />
+        <Label htmlFor="ge">🎁 Show the surprise box to students after the camera starts</Label>
+      </div>
+      {v.gift_enabled && <F label="Surprise box message (shown before the first question)" className="sm:col-span-2">
         <Textarea rows={4} value={v.gift_message} onChange={up("gift_message")} placeholder="Take a deep breath — you've prepared well! Only your white sheet and pencil are allowed. You've got this! 🚀" />
         <p className="text-xs text-muted-foreground">Leave empty to show a friendly default message.</p>
-      </F>
+      </F>}
       <div className="sm:col-span-2"><Button disabled={busy || (!v.subject && !v.multi_subject) || tooMany} className="h-11">{busy ? "Saving..." : submitLabel}</Button></div>
     </form>
   );
