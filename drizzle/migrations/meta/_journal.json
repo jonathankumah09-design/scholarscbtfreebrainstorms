@@ -71,6 +71,13 @@
       "when": 1791483467906,
       "tag": "0009_gift_toggle",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1791494571547,
+      "tag": "0010_auto_student_ids",
+      "breakpoints": true
     }
   ]
 }

@@ -544,6 +544,7 @@ export type Database = {
       attempt_gift_message: { Args: { _attempt_id: string }; Returns: string }
       build_delivery: { Args: { _attempt_id: string }; Returns: Json }
       claim_admin: { Args: never; Returns: boolean }
+      email_for_student_id: { Args: { _sid: string }; Returns: string }
       finalize_if_expired: { Args: { _attempt_id: string }; Returns: undefined }
       get_attempt: { Args: { _attempt_id: string }; Returns: Json }
       grade_written: {
