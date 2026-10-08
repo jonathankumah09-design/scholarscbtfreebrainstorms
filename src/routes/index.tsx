@@ -34,15 +34,15 @@ function Home() {
       <section className="relative overflow-hidden text-primary-foreground">
         <img src={HERO} alt="Scholars studying in a quiet library" width={1600} height={1000} className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-primary/40" />
-        <div className="relative mx-auto max-w-5xl px-5 pb-24 pt-6">
+        <div className="relative mx-auto max-w-5xl px-5 pb-24 pt-8">
           <div className="flex items-center gap-3">
             <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-success text-success-foreground shadow-sm"><GraduationCap className="h-7 w-7" /></span>
             <span className="leading-tight">
               <span className="block font-display text-2xl font-extrabold tracking-wide sm:text-3xl">SCHOLARS CBT</span>
-              <span className="block text-[11px] font-bold uppercase tracking-[0.25em] opacity-80">Learn · Practice · Test</span>
+              <span className="block text-[11px] font-bold uppercase tracking-[0.25em] opacity-80 sm:text-xs">Learn · Practice · Test</span>
             </span>
           </div>
-          <div className="pt-16 sm:pt-24">
+          <div className="pt-20 sm:pt-24">
             <p className="inline-block rounded-full bg-success px-3 py-1 text-sm font-bold text-success-foreground">Scholarly Excellence · Digital Learning</p>
             <h1 className="mt-5 max-w-3xl text-4xl font-extrabold leading-[1.05] sm:text-6xl">Where Scholars Master Every Subject</h1>
             <p className="mt-5 max-w-xl text-lg opacity-90">
