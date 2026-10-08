@@ -4,11 +4,23 @@ import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { AiTutor } from "@/components/AiTutor";
 
-type Row = { id: string; text: string; type: string; subject: string; options: string[]; correct: string; answer: string; marks: number };
+export type CorrectionRow = { id: string; text: string; type: string; subject: string; options: (string | { text: string; value: string })[]; correct: string; answer: string; marks: number; explanation?: string };
+type Row = CorrectionRow;
 
-const letterText = (opts: string[], l: string) => {
+export function isRight(q: CorrectionRow): boolean | null {
+  const ans = (q.answer ?? "").trim();
+  if (q.type === "written") return null;
+  if (!ans) return false;
+  if (q.type === "short") return q.correct.split("|").some((x) => x.trim().toLowerCase() === ans.toLowerCase());
+  return ans.toLowerCase() === q.correct.toLowerCase();
+}
+
+const letterText = (opts: Row["options"], l: string) => {
+  const hit = opts.find((o) => typeof o === "object" && o.value === l);
+  if (hit && typeof hit === "object") return hit.text;
   const i = l ? l.toUpperCase().charCodeAt(0) - 65 : -1;
-  return i >= 0 && i < opts.length ? opts[i] : l;
+  const o = i >= 0 && i < opts.length ? opts[i] : undefined;
+  return o === undefined ? l : typeof o === "string" ? o : o.text;
 };
 
 export function Corrections({ attemptId }: { attemptId: string }) {
@@ -26,11 +38,7 @@ export function Corrections({ attemptId }: { attemptId: string }) {
         {data.map((q, i) => {
           const isChoice = q.type === "mcq" || q.type === "true_false";
           const ans = (q.answer ?? "").trim();
-          let ok: boolean | null;
-          if (q.type === "written") ok = null;
-          else if (!ans) ok = false;
-          else if (q.type === "short") ok = q.correct.split("|").some((x) => x.trim().toLowerCase() === ans.toLowerCase());
-          else ok = ans.toLowerCase() === q.correct.toLowerCase();
+          const ok = isRight(q);
           const yours = !ans ? "Not answered" : isChoice ? letterText(q.options, ans) : ans;
           const right = isChoice ? letterText(q.options, q.correct) : q.correct.split("|")[0];
           return (
@@ -43,6 +51,7 @@ export function Corrections({ attemptId }: { attemptId: string }) {
               <p className="mt-1 whitespace-pre-wrap font-bold">{q.text}</p>
               <p className="mt-2 text-sm"><span className="text-muted-foreground">Your answer: </span>{yours}</p>
               {q.type !== "written" && ok !== true && <p className="text-sm font-bold text-success">Correct answer: {right}</p>}
+              {q.explanation && <p className="mt-2 whitespace-pre-wrap rounded-xl bg-primary/5 p-3 text-sm"><span className="font-bold text-primary">Explanation: </span>{q.explanation}</p>}
             </div>
           );
         })}
