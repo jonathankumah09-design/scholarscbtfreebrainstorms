@@ -16,9 +16,12 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as StaffRouteImport } from './routes/staff'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedLeaderboardRouteImport } from './routes/_authenticated/leaderboard'
 import { Route as AuthenticatedSyllabusRouteImport } from './routes/_authenticated/syllabus'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as AuthenticatedAdminActivityRouteImport } from './routes/_authenticated/admin/activity'
 import { Route as AuthenticatedAdminLiveRouteImport } from './routes/_authenticated/admin/live'
+import { Route as AuthenticatedAdminMeritRouteImport } from './routes/_authenticated/admin/merit'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin/messages'
 import { Route as AuthenticatedAdminQuestionsRouteImport } from './routes/_authenticated/admin/questions'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
@@ -66,6 +69,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedLeaderboardRoute =
+  AuthenticatedLeaderboardRouteImport.update({
+    id: '/leaderboard',
+    path: '/leaderboard',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedSyllabusRoute = AuthenticatedSyllabusRouteImport.update({
   id: '/syllabus',
   path: '/syllabus',
@@ -76,9 +85,20 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminActivityRoute =
+  AuthenticatedAdminActivityRouteImport.update({
+    id: '/activity',
+    path: '/activity',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminLiveRoute = AuthenticatedAdminLiveRouteImport.update({
   id: '/live',
   path: '/live',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminMeritRoute = AuthenticatedAdminMeritRouteImport.update({
+  id: '/merit',
+  path: '/merit',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
 const AuthenticatedAdminMessagesRoute =
@@ -160,8 +180,11 @@ export interface FileRoutesByFullPath {
   '/staff': typeof StaffRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/leaderboard': typeof AuthenticatedLeaderboardRoute
   '/syllabus': typeof AuthenticatedSyllabusRoute
+  '/admin/activity': typeof AuthenticatedAdminActivityRoute
   '/admin/live': typeof AuthenticatedAdminLiveRoute
+  '/admin/merit': typeof AuthenticatedAdminMeritRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/questions': typeof AuthenticatedAdminQuestionsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -182,8 +205,11 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/staff': typeof StaffRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/leaderboard': typeof AuthenticatedLeaderboardRoute
   '/syllabus': typeof AuthenticatedSyllabusRoute
+  '/admin/activity': typeof AuthenticatedAdminActivityRoute
   '/admin/live': typeof AuthenticatedAdminLiveRoute
+  '/admin/merit': typeof AuthenticatedAdminMeritRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/questions': typeof AuthenticatedAdminQuestionsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -207,8 +233,11 @@ export interface FileRoutesById {
   '/staff': typeof StaffRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/leaderboard': typeof AuthenticatedLeaderboardRoute
   '/_authenticated/syllabus': typeof AuthenticatedSyllabusRoute
+  '/_authenticated/admin/activity': typeof AuthenticatedAdminActivityRoute
   '/_authenticated/admin/live': typeof AuthenticatedAdminLiveRoute
+  '/_authenticated/admin/merit': typeof AuthenticatedAdminMeritRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/questions': typeof AuthenticatedAdminQuestionsRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -232,8 +261,11 @@ export interface FileRouteTypes {
     | '/staff'
     | '/admin'
     | '/dashboard'
+    | '/leaderboard'
     | '/syllabus'
+    | '/admin/activity'
     | '/admin/live'
+    | '/admin/merit'
     | '/admin/messages'
     | '/admin/questions'
     | '/admin/settings'
@@ -254,8 +286,11 @@ export interface FileRouteTypes {
     | '/register'
     | '/staff'
     | '/dashboard'
+    | '/leaderboard'
     | '/syllabus'
+    | '/admin/activity'
     | '/admin/live'
+    | '/admin/merit'
     | '/admin/messages'
     | '/admin/questions'
     | '/admin/settings'
@@ -278,8 +313,11 @@ export interface FileRouteTypes {
     | '/staff'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
+    | '/_authenticated/leaderboard'
     | '/_authenticated/syllabus'
+    | '/_authenticated/admin/activity'
     | '/_authenticated/admin/live'
+    | '/_authenticated/admin/merit'
     | '/_authenticated/admin/messages'
     | '/_authenticated/admin/questions'
     | '/_authenticated/admin/settings'
@@ -354,6 +392,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/leaderboard': {
+      id: '/_authenticated/leaderboard'
+      path: '/leaderboard'
+      fullPath: '/leaderboard'
+      preLoaderRoute: typeof AuthenticatedLeaderboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/syllabus': {
       id: '/_authenticated/syllabus'
       path: '/syllabus'
@@ -368,11 +413,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/activity': {
+      id: '/_authenticated/admin/activity'
+      path: '/activity'
+      fullPath: '/admin/activity'
+      preLoaderRoute: typeof AuthenticatedAdminActivityRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/live': {
       id: '/_authenticated/admin/live'
       path: '/live'
       fullPath: '/admin/live'
       preLoaderRoute: typeof AuthenticatedAdminLiveRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/merit': {
+      id: '/_authenticated/admin/merit'
+      path: '/merit'
+      fullPath: '/admin/merit'
+      preLoaderRoute: typeof AuthenticatedAdminMeritRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/messages': {
@@ -463,7 +522,9 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminActivityRoute: typeof AuthenticatedAdminActivityRoute
   AuthenticatedAdminLiveRoute: typeof AuthenticatedAdminLiveRoute
+  AuthenticatedAdminMeritRoute: typeof AuthenticatedAdminMeritRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
   AuthenticatedAdminQuestionsRoute: typeof AuthenticatedAdminQuestionsRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
@@ -478,7 +539,9 @@ interface AuthenticatedAdminRouteRouteChildren {
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminActivityRoute: AuthenticatedAdminActivityRoute,
     AuthenticatedAdminLiveRoute: AuthenticatedAdminLiveRoute,
+    AuthenticatedAdminMeritRoute: AuthenticatedAdminMeritRoute,
     AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
     AuthenticatedAdminQuestionsRoute: AuthenticatedAdminQuestionsRoute,
     AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
@@ -500,6 +563,7 @@ const AuthenticatedAdminRouteRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedLeaderboardRoute: typeof AuthenticatedLeaderboardRoute
   AuthenticatedSyllabusRoute: typeof AuthenticatedSyllabusRoute
   AuthenticatedAttemptAttemptIdRoute: typeof AuthenticatedAttemptAttemptIdRoute
   AuthenticatedResultAttemptIdRoute: typeof AuthenticatedResultAttemptIdRoute
@@ -509,6 +573,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedLeaderboardRoute: AuthenticatedLeaderboardRoute,
   AuthenticatedSyllabusRoute: AuthenticatedSyllabusRoute,
   AuthenticatedAttemptAttemptIdRoute: AuthenticatedAttemptAttemptIdRoute,
   AuthenticatedResultAttemptIdRoute: AuthenticatedResultAttemptIdRoute,
