@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TestForm } from "@/components/TestForm";
 import { ImportQuestions } from "@/components/ImportQuestions";
+import { BankPicker } from "@/components/BankPicker";
 import { fetchAll } from "@/lib/admin-data";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
@@ -128,6 +129,7 @@ function EditTest() {
             <QuestionEditor key={cur} subject={cur} testId={testId} position={questions.length + 1} onDone={() => { setEditing(null); refresh(); }} onSaveAnother={refresh} />
           ) : (
             <div className="space-y-3">
+              <BankPicker key={"b" + cur} subject={cur} testId={testId} position={questions.length + 1} onDone={refresh} />
               <Button variant="outline" className="h-12 w-full border-dashed" onClick={() => setEditing("new")}><Plus className="mr-1 h-4 w-4" />Add Question</Button>
               <ImportQuestions key={cur} subject={cur} testId={testId} position={questions.length + 1} onDone={refresh} />
             </div>
