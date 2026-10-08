@@ -17,15 +17,15 @@ export const Route = createFileRoute("/_authenticated/result/$attemptId")({
 function Gauge({ value, tone }: { value: number; tone: string }) {
   const r = 70, c = 2 * Math.PI * r;
   return (
-    <div className="relative mx-auto h-48 w-48">
+    <div className="relative mx-auto h-28 w-28 sm:h-32 sm:w-32">
       <svg viewBox="0 0 160 160" className="h-full w-full -rotate-90">
         <circle cx="80" cy="80" r={r} fill="none" strokeWidth="14" className="stroke-muted" />
         <circle cx="80" cy="80" r={r} fill="none" strokeWidth="14" strokeLinecap="round" className={cn("transition-all duration-1000", tone)}
           strokeDasharray={c} strokeDashoffset={c - (c * Math.min(100, value)) / 100} />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="font-display text-5xl font-extrabold">{value}%</span>
-        <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Score</span>
+        <span className="font-display text-2xl font-extrabold sm:text-3xl">{value}%</span>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Score</span>
       </div>
     </div>
   );
@@ -62,23 +62,23 @@ function Result() {
 
   return (
     <StudentShell>
-      <div id="result-slip" className="overflow-hidden rounded-3xl border bg-card shadow-sm">
+      <div id="result-slip" className="overflow-hidden rounded-2xl border bg-card shadow-sm">
         <div className="flex items-center justify-between bg-primary px-6 py-3 text-primary-foreground">
           <span className="font-display font-extrabold tracking-wide">SCHOLARS CBT · RESULT SLIP</span>
           <span className="text-xs font-bold">{r.submitted_at ? new Date(r.submitted_at).toLocaleDateString([], { dateStyle: "medium" }) : ""}</span>
         </div>
-        <div className="grid gap-6 p-6 sm:p-8 md:grid-cols-[1fr_auto]">
+        <div className="grid grid-cols-[1fr_auto] items-center gap-3 p-4 sm:p-5">
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Candidate</p>
-            <h1 className="mt-1 text-2xl font-extrabold">{me?.profile?.full_name}</h1>
+            <h1 className="mt-0.5 text-lg font-extrabold sm:text-xl">{me?.profile?.full_name}</h1>
             <p className="text-sm text-muted-foreground">{[me?.profile?.class && `Class ${me.profile.class}`, me?.profile?.student_id && `Reg ${me.profile.student_id}`].filter(Boolean).join(" · ")}</p>
-            <p className="mt-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Examination</p>
-            <p className="text-lg font-bold">{r.test_title}</p>
+            <p className="mt-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Examination</p>
+            <p className="text-sm font-bold sm:text-base">{r.test_title}</p>
             {r.show_results && (
-              <div className="mt-4 flex flex-wrap items-center gap-3">
-                <span className="font-display text-3xl font-extrabold">{r.score}<span className="text-lg text-muted-foreground">/{r.total}</span></span>
-                <span className="rounded-lg bg-accent px-3 py-1 font-display text-xl font-extrabold text-accent-foreground">Grade {grade}</span>
-                <span className={cn("rounded-full px-4 py-1 text-sm font-extrabold",
+              <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                <span className="font-display text-xl font-extrabold">{r.score}<span className="text-sm text-muted-foreground">/{r.total}</span></span>
+                <span className="rounded-md bg-accent px-2 py-0.5 font-display text-sm font-extrabold text-accent-foreground">Grade {grade}</span>
+                <span className={cn("rounded-full px-2.5 py-0.5 text-[11px] font-extrabold",
                   r.pending_grading ? "bg-muted" : passed ? "bg-success text-success-foreground" : "bg-destructive text-destructive-foreground")}>
                   {r.pending_grading ? "AWAITING MARKING" : passed ? "PASSED" : "FAILED"}
                 </span>
@@ -91,8 +91,8 @@ function Result() {
         {!r.show_results ? (
           <p className="mx-6 mb-6 rounded-xl bg-muted p-5 text-center">Your test has been submitted. Your teacher will release the results soon.</p>
         ) : (
-          <div className="space-y-6 px-6 pb-6 sm:px-8">
-            <div className="grid grid-cols-3 gap-3">
+          <div className="space-y-3 px-4 pb-4 sm:px-5">
+            <div className="grid grid-cols-3 gap-2">
               <Chip icon={CheckCircle2} n={r.correct_count} l="Correct" c="bg-success/15 text-success" />
               <Chip icon={XCircle} n={r.wrong_count} l="Wrong" c="bg-destructive/10 text-destructive" />
               <Chip icon={MinusCircle} n={r.unanswered_count} l="Unattempted" c="bg-muted text-muted-foreground" />
@@ -100,13 +100,13 @@ function Result() {
             {bySubject.size > 0 && (
               <div>
                 <p className="mb-2 text-sm font-extrabold uppercase tracking-wide">Subject Performance</p>
-                <div className="space-y-2.5">
+                <div className="space-y-1.5">
                   {[...bySubject.entries()].map(([s, v]) => {
                     const sp = Math.round((v.right / Math.max(1, v.total)) * 100);
                     return (
                       <div key={s}>
                         <div className="flex justify-between text-sm"><span className="font-bold">{s}</span><span className="text-muted-foreground">{v.right}/{v.total} · {sp}%</span></div>
-                        <div className="mt-1 h-2.5 overflow-hidden rounded-full bg-muted">
+                        <div className="mt-0.5 h-1.5 overflow-hidden rounded-full bg-muted">
                           <div className={cn("h-full rounded-full", sp >= r.pass_percentage ? "bg-success" : sp >= 40 ? "bg-warning" : "bg-destructive")} style={{ width: `${sp}%` }} />
                         </div>
                       </div>
@@ -118,7 +118,7 @@ function Result() {
             {r.pending_grading && <p className="text-sm text-muted-foreground">Some written answers will be marked by your teacher.</p>}
           </div>
         )}
-        <div className="flex flex-wrap gap-3 border-t bg-muted/40 px-6 py-4 print:hidden">
+        <div className="flex flex-wrap gap-2 border-t bg-muted/40 px-4 py-3 print:hidden">
           <Button onClick={() => window.print()}><Download className="mr-2 h-4 w-4" />Download Result Slip</Button>
           {rows.length > 0 && (
             <Button variant="outline" onClick={() => setShowCorr((v) => !v)}><BookOpenCheck className="mr-2 h-4 w-4" />{showCorr ? "Hide" : "View"} Corrections & Explanations</Button>
