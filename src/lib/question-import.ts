@@ -18,11 +18,13 @@ export type ParsedQ = {
   options: string[];
   correct_answer: string;
   marks: number;
+  explanation?: string;
 };
 
 const START = /^\s*(?:q(?:uestion)?\s*)?\d{1,4}\s*[.)\]:-]\s*(.{1,600})$/i;
 const OPT = /^\s*[([{]?\s*([A-Ha-h])\s*[).:\]]\s+(.{1,600})$/;
 const ANS = /^\s*(?:ans(?:wer)?|correct(?:\s+(?:answer|option))?|right\s+answer)\s*[:\-–—]\s*(.{1,300})$/i;
+const EXP = /^\s*(?:explanation|reason|working|solution)\s*[:\-–—]\s*(.*)$/i;
 const MARKS = /[[\(]?\s*(\d{1,3}(?:\.\d{1,2})?)\s*marks?\s*[\])]?/i;
 
 const clean = (s: string) =>
@@ -56,7 +58,7 @@ function toBlocks(text: string): Block[] {
 
 function one(q: ParsedQ): string {
   const opts = q.options.map((o, i) => `${String.fromCharCode(65 + i)}. ${o}`).join("\n");
-  return [q.text, opts, `Answer: ${q.correct_answer}`].filter(Boolean).join("\n");
+  return [q.text, opts, `Answer: ${q.correct_answer}`, q.explanation ? `Explanation: ${q.explanation}` : ""].filter(Boolean).join("\n");
 }
 
 export function parseQuestions(raw: string): { questions: ParsedQ[]; problems: string[] } {
@@ -70,8 +72,13 @@ export function parseQuestions(raw: string): { questions: ParsedQ[]; problems: s
     let answer = "";
     let marks = 1;
     let nextLetter = "A";
+    let explanation = "";
+    let inExp = false;
 
     for (const line of b.lines) {
+      const ex = EXP.exec(line);
+      if (ex) { inExp = true; explanation = clean(ex[1] ?? ""); continue; }
+      if (inExp) { explanation = explanation ? `${explanation}\n${clean(line)}` : clean(line); continue; }
       const a = ANS.exec(line);
       if (a && !OPT.test(line)) { answer = clean(a[1] ?? ""); continue; }
 
@@ -106,7 +113,7 @@ export function parseQuestions(raw: string): { questions: ParsedQ[]; problems: s
 
     if (!options.length) {
       if (!answer) { problems.push(`"${text.slice(0, 50)}…" was skipped: no correct answer found.`); return; }
-      questions.push({ text, type: "short", options: [], correct_answer: answer, marks });
+      questions.push({ text, type: "short", options: [], correct_answer: answer, marks, explanation });
       return;
     }
     if (options.length < 2) { problems.push(`"${text.slice(0, 50)}…" was skipped: only one option found.`); return; }
@@ -128,9 +135,9 @@ export function parseQuestions(raw: string): { questions: ParsedQ[]; problems: s
     if (!correct) { problems.push(`"${text.slice(0, 50)}…" was skipped: no correct answer found.`); return; }
 
     if (isTF) {
-      questions.push({ text, type: "true_false", options: ["True", "False"], correct_answer: correct === "A" ? "True" : "False", marks });
+      questions.push({ text, type: "true_false", options: ["True", "False"], correct_answer: correct === "A" ? "True" : "False", marks, explanation });
     } else {
-      questions.push({ text, type: "mcq", options, correct_answer: correct, marks });
+      questions.push({ text, type: "mcq", options, correct_answer: correct, marks, explanation });
     }
   });
 
@@ -138,7 +145,7 @@ export function parseQuestions(raw: string): { questions: ParsedQ[]; problems: s
 }
 
 export function sampleText() {
-  const q1: ParsedQ = { text: "What is 5 x 6?", type: "mcq", options: ["30", "24", "12", "6"], correct_answer: "A", marks: 1 };
+  const q1: ParsedQ = { text: "What is 5 x 6?", type: "mcq", options: ["30", "24", "12", "6"], correct_answer: "A", marks: 1, explanation: "5 groups of 6 make 30." };
   const q2: ParsedQ = { text: "The earth is flat.", type: "true_false", options: ["True", "False"], correct_answer: "False", marks: 1 };
   const q3: ParsedQ = { text: "Who is the capital of Nigeria? [2 marks]", type: "short", options: [], correct_answer: "Abuja", marks: 2 };
   return [q1, q2, q3].map(one).join("\n\n");
