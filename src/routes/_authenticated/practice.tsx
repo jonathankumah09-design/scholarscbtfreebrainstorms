@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_authenticated/practice")({
 const L = ["A", "B", "C", "D"] as const;
 
 function Practice() {
-  const [sub, setSub] = useState(BANK_SUBJECTS[0]);
+  const [sub, setSub] = useState<string>(BANK_SUBJECTS[0] ?? "English");
   const [i, setI] = useState(0);
   const [pick, setPick] = useState<string | null>(null);
   const [score, setScore] = useState({ right: 0, seen: 0 });
@@ -45,8 +45,8 @@ function Practice() {
         </div>
         <p className="mt-4 text-lg font-bold">{q}</p>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
-          {opts.map((o, k) => {
-            const l = L[k];
+          {opts.map((o: string, k: number) => {
+            const l = L[k] as string;
             const state = !pick ? "" : l === ans ? "border-success bg-success/10" : l === pick ? "border-destructive bg-destructive/10" : "opacity-60";
             return (
               <button key={l} onClick={() => choose(l)} className={cn("flex items-center gap-3 rounded-xl border-2 p-4 text-left transition hover:border-primary", state)}>

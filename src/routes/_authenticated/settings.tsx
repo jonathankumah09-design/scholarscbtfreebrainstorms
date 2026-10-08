@@ -28,16 +28,16 @@ function Settings() {
     setBusy(true);
     const { error } = await supabase.from("profiles").update({ full_name: name.trim(), phone: phone.trim() }).eq("id", me.user.id);
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     qc.invalidateQueries({ queryKey: ["me"] });
     toast.success("Profile saved");
   }
   async function savePw() {
-    if (pw.length < 6) return toast.error("Password must be at least 6 characters");
+    if (pw.length < 6) { toast.error("Password must be at least 6 characters"); return; }
     setBusy(true);
     const { error } = await supabase.auth.updateUser({ password: pw });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setPw("");
     toast.success("Password changed");
   }
