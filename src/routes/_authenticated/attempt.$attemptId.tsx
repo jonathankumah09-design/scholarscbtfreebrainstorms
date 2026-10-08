@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
-import { Proctor } from "@/components/Proctor";
+import { Proctor, CameraMonitor } from "@/components/Proctor";
 import { GiftCard } from "@/components/GiftCard";
 import { Calculator } from "@/components/Calculator";
 import { flushAdminEmails } from "@/lib/notify.functions";
@@ -123,92 +123,126 @@ function Runner({ data }: { data: AttemptData }) {
   const opts = q?.options ?? [];
   const subjects = [...new Set(qs.map((x) => x.subject ?? "").filter(Boolean))];
 
+  const name = me?.profile?.full_name || "Candidate";
+  const flaggedCount = qs.filter((x) => flags[x.id]).length;
+  const timeTone = left < 60000 ? "bg-destructive text-destructive-foreground animate-pulse" : left < 300000 ? "bg-warning text-warning-foreground" : "bg-primary text-primary-foreground";
+
+  const palette = (
+    <div className="rounded-2xl border bg-card p-4">
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-extrabold uppercase tracking-wide">Question Palette</p>
+        <p className="text-xs font-bold text-muted-foreground">{answered}/{qs.length}</p>
+      </div>
+      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full bg-success transition-all" style={{ width: `${qs.length ? (answered / qs.length) * 100 : 0}%` }} /></div>
+      {subjects.length > 1 && (
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {subjects.map((n) => (
+            <button key={n} onClick={() => setIdx(qs.findIndex((x) => x.subject === n))}
+              className={cn("rounded-full px-2.5 py-1 text-xs font-bold", q?.subject === n ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-accent")}>
+              {n} {qs.filter((x) => x.subject === n && (answers[x.id] ?? "").trim()).length}/{qs.filter((x) => x.subject === n).length}
+            </button>
+          ))}
+        </div>
+      )}
+      <div className="mt-3 grid grid-cols-6 gap-1.5 sm:grid-cols-8 lg:grid-cols-5">
+        {qs.map((x, i) => (subjects.length > 1 && x.subject !== q?.subject) ? null : (
+          <button key={x.id} onClick={() => setIdx(i)} aria-label={`Question ${i + 1}`}
+            className={cn("aspect-square rounded-lg border text-sm font-bold transition",
+              i === idx ? "border-primary bg-primary text-primary-foreground ring-2 ring-primary/30" : flags[x.id] ? "border-warning bg-warning text-warning-foreground" : (answers[x.id] ?? "").trim() ? "border-success bg-success text-success-foreground" : "border-border bg-muted text-muted-foreground hover:border-primary/50")}>
+            {i + 1}
+          </button>
+        ))}
+      </div>
+      <div className="mt-3 grid grid-cols-2 gap-1.5 text-xs text-muted-foreground">
+        <Legend c="bg-muted border" l="Not answered" /><Legend c="bg-success" l="Answered" /><Legend c="bg-warning" l="Flagged" /><Legend c="bg-primary" l="Current" />
+      </div>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-background pb-28">
+    <div className="min-h-screen bg-background pb-24 lg:pb-6">
       <Calculator />
-      <header className="sticky top-0 z-10 border-b bg-card">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3">
-          <div className="min-w-0">
-            <p className="text-[11px] font-extrabold tracking-widest text-primary">SCHOLARS CBT</p>
-            <p className="truncate font-display font-bold">{data.test.title}</p>
-            <p className="truncate text-xs text-muted-foreground">{me?.profile?.full_name} · {saved ? "All answers saved" : "Saving..."}</p>
+      <header className="sticky top-0 z-10 border-b bg-card/95 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent font-display text-lg font-extrabold text-accent-foreground">{name.charAt(0).toUpperCase()}</span>
+            <div className="min-w-0">
+              <p className="truncate font-bold leading-tight">{name}</p>
+              <p className="truncate text-xs text-muted-foreground">{[me?.profile?.class, me?.profile?.student_id].filter(Boolean).join(" · ") || "Candidate"} · {data.test.title}</p>
+              <p className="text-[11px] font-bold text-muted-foreground">{saved ? "✓ All answers saved" : "Saving..."}</p>
+            </div>
           </div>
-          <div className={cn("flex items-center gap-1.5 rounded-full px-3 py-1.5 font-mono text-lg font-bold tabular-nums",
-            left < 60000 ? "bg-destructive text-destructive-foreground" : left < 300000 ? "bg-accent text-accent-foreground" : "bg-primary text-primary-foreground")}>
-            <Clock className="h-4 w-4" /><span className="hidden text-xs sm:inline">TIME REMAINING</span> {String(mm).padStart(2, "0")}:{String(ss).padStart(2, "0")}
+          <div className={cn("flex items-center gap-2 rounded-xl px-4 py-2 font-mono text-xl font-bold tabular-nums shadow-sm", timeTone)}>
+            <Clock className="h-5 w-5" /><span className="hidden text-[10px] font-sans tracking-widest sm:inline">TIME LEFT</span>{String(mm).padStart(2, "0")}:{String(ss).padStart(2, "0")}
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-3xl px-4 py-5">
-        {subjects.length > 1 && (
-          <div className="mb-4 flex flex-wrap gap-2">
-            {subjects.map((n) => (
-              <Button key={n} size="sm" variant={q?.subject === n ? "default" : "outline"} onClick={() => setIdx(qs.findIndex((x) => x.subject === n))}>
-                {n} ({qs.filter((x) => x.subject === n && (answers[x.id] ?? "").trim()).length}/{qs.filter((x) => x.subject === n).length})
-              </Button>
-            ))}
-          </div>
-        )}
-        <div className="mb-5 flex flex-wrap gap-2">
-          {qs.map((x, i) => (subjects.length > 1 && x.subject !== q?.subject) ? null : (
-            <button key={x.id} onClick={() => setIdx(i)}
-              className={cn("h-10 w-10 rounded-lg border text-sm font-bold",
-                i === idx ? "border-primary bg-primary text-primary-foreground" : flags[x.id] ? "border-warning bg-warning text-warning-foreground" : (answers[x.id] ?? "").trim() ? "border-success bg-success text-success-foreground" : "border-border bg-muted text-muted-foreground")}>
-              {i + 1}
-            </button>
-          ))}
-        </div>
+      <div className="mx-auto grid max-w-7xl gap-4 px-4 py-4 lg:grid-cols-[260px_1fr_260px]">
+        <aside className="order-2 lg:order-1 lg:sticky lg:top-24 lg:self-start">{palette}</aside>
 
-        <div className="-mt-2 mb-4 flex flex-wrap gap-3 text-xs text-muted-foreground">
-          <Legend c="bg-muted border" l="Unanswered" /><Legend c="bg-success" l="Answered" /><Legend c="bg-warning" l="Flagged" /><Legend c="bg-primary" l="Current" />
-        </div>
-        {q ? (
-          <div className="rounded-2xl border bg-card p-5 sm:p-7">
-            <p className="text-sm font-bold text-muted-foreground">{q.subject ? `${q.subject} · ` : ""}Question {idx + 1} of {qs.length} · {q.marks} mark{Number(q.marks) === 1 ? "" : "s"}</p>
-            <h2 className="mt-2 whitespace-pre-wrap font-sans text-xl font-bold leading-snug tracking-normal">{q.text}</h2>
-            <div className="mt-5 space-y-3">
-              {(q.type === "mcq" || q.type === "true_false") && opts.map((o, i) => {
-                const sel = answers[q.id] === o.value;
-                return (
-                  <button key={o.value} onClick={() => setA(o.value)}
-                    className={cn("flex w-full items-center gap-3 rounded-xl border-2 p-4 text-left text-base transition",
-                      sel ? "border-primary bg-primary/10" : "border-border bg-background hover:border-primary/40")}>
-                    <span className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 font-bold",
-                      sel ? "border-primary bg-primary text-primary-foreground" : "border-input")}>
-                      {sel ? <Check className="h-4 w-4" /> : q.type === "mcq" ? String.fromCharCode(65 + i) : ""}
-                    </span>
-                    {o.text}
-                  </button>
-                );
-              })}
-              {q.type === "short" && <Input value={answers[q.id] ?? ""} onChange={(e) => setA(e.target.value)} placeholder="Type your answer" className="h-14 text-lg" />}
-              {q.type === "written" && <Textarea value={answers[q.id] ?? ""} onChange={(e) => setA(e.target.value)} placeholder="Write your answer" rows={8} className="text-base" />}
+        <main className="order-1 min-w-0 lg:order-2">
+          {q ? (
+            <div className="rounded-2xl border bg-card p-5 shadow-sm sm:p-7">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="rounded-full bg-primary/10 px-3 py-1 text-xs font-extrabold uppercase tracking-wide text-primary">{q.subject ? `${q.subject} · ` : ""}Question {idx + 1} of {qs.length}</p>
+                <p className="text-xs font-bold text-muted-foreground">{q.marks} mark{Number(q.marks) === 1 ? "" : "s"}</p>
+              </div>
+              <h2 className="mt-4 whitespace-pre-wrap font-sans text-xl font-bold leading-snug tracking-normal sm:text-2xl">{q.text}</h2>
+              <div className={cn("mt-6 grid gap-3", (q.type === "mcq" || q.type === "true_false") && "sm:grid-cols-2")}>
+                {(q.type === "mcq" || q.type === "true_false") && opts.map((o, i) => {
+                  const sel = answers[q.id] === o.value;
+                  return (
+                    <button key={o.value} onClick={() => setA(o.value)}
+                      className={cn("group flex min-h-20 w-full items-center gap-4 rounded-2xl border-2 p-4 text-left text-base font-medium transition",
+                        sel ? "border-primary bg-primary/10 shadow-md" : "border-border bg-background hover:-translate-y-0.5 hover:border-primary/50 hover:shadow")}>
+                      <span className={cn("flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-2 font-display text-xl font-extrabold",
+                        sel ? "border-primary bg-primary text-primary-foreground" : "border-input bg-muted group-hover:border-primary/50")}>
+                        {sel ? <Check className="h-6 w-6" /> : q.type === "mcq" ? String.fromCharCode(65 + i) : i === 0 ? "T" : "F"}
+                      </span>
+                      <span>{o.text}</span>
+                    </button>
+                  );
+                })}
+                {q.type === "short" && <Input value={answers[q.id] ?? ""} onChange={(e) => setA(e.target.value)} placeholder="Type your answer" className="h-14 text-lg" />}
+                {q.type === "written" && <Textarea value={answers[q.id] ?? ""} onChange={(e) => setA(e.target.value)} placeholder="Write your answer" rows={8} className="text-base" />}
+              </div>
+              <div className="mt-5 flex flex-wrap gap-2">
+                <Button variant={flags[q.id] ? "default" : "outline"} size="sm" onClick={() => setFlags((f) => ({ ...f, [q.id]: !f[q.id] }))}>
+                  <Flag className="mr-1 h-4 w-4" />{flags[q.id] ? "Flagged" : "Flag for review"}
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => setAnswers((a) => { const n = { ...a }; delete n[q.id]; return n; })}>
+                  <Eraser className="mr-1 h-4 w-4" />Clear Answer
+                </Button>
+              </div>
+              <div className="mt-6 hidden gap-2 border-t pt-5 lg:flex">
+                <Button variant="outline" className="h-12 flex-1" disabled={idx === 0} onClick={() => setIdx(idx - 1)}>← Previous</Button>
+                {idx < qs.length - 1 && <Button className="h-12 flex-1" onClick={() => setIdx(idx + 1)}>Next →</Button>}
+                <Button className="h-12 flex-1 bg-success text-success-foreground hover:bg-success/90" onClick={() => setConfirm(true)}>Submit Exam</Button>
+              </div>
             </div>
-            <div className="mt-5 flex flex-wrap gap-2">
-              <Button variant="outline" size="sm" onClick={() => setFlags((f) => ({ ...f, [q.id]: !f[q.id] }))} className={cn(flags[q.id] && "border-warning bg-warning/20")}>
-                <Flag className="mr-1 h-4 w-4" />{flags[q.id] ? "Unflag" : "Flag Question"}
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => setAnswers((a) => { const n = { ...a }; delete n[q.id]; return n; })}>
-                <Eraser className="mr-1 h-4 w-4" />Clear Answer
-              </Button>
-            </div>
-          </div>
-        ) : <p>This test has no questions.</p>}
-      </main>
+          ) : <p>This test has no questions.</p>}
+        </main>
 
-      <footer className="fixed inset-x-0 bottom-0 border-t bg-card">
+        <aside className="order-first space-y-3 lg:order-3 lg:sticky lg:top-24 lg:self-start">
+          <CameraMonitor className="mx-auto max-w-[200px] lg:max-w-none" />
+          <div className="hidden grid-cols-3 gap-2 text-center lg:grid">
+            <MiniStat n={answered} l="Done" c="bg-success/15" />
+            <MiniStat n={qs.length - answered} l="Left" c="bg-destructive/10" />
+            <MiniStat n={flaggedCount} l="Flagged" c="bg-warning/25" />
+          </div>
+          <p className="hidden rounded-xl bg-muted p-3 text-xs text-muted-foreground lg:block">Keep your face in view. Do not switch tabs — every switch is reported to your supervisor.</p>
+        </aside>
+      </div>
+
+      <footer className="fixed inset-x-0 bottom-0 border-t bg-card lg:hidden">
         <div className="mx-auto flex max-w-3xl gap-2 px-4 py-3">
           <Button variant="outline" className="h-12 flex-1" disabled={idx === 0} onClick={() => setIdx(idx - 1)}>Previous</Button>
           {idx < qs.length - 1 ? (
             <Button className="h-12 flex-1" onClick={() => setIdx(idx + 1)}>Next</Button>
-          ) : (
-            <Button className="h-12 flex-1 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setConfirm(true)}>Submit Test</Button>
-          )}
+          ) : null}
+          <Button className="h-12 flex-1 bg-success text-success-foreground hover:bg-success/90" onClick={() => setConfirm(true)}>Submit</Button>
         </div>
-        {idx < qs.length - 1 && (
-          <div className="mx-auto max-w-3xl px-4 pb-3"><button className="w-full text-sm font-bold text-primary underline" onClick={() => setConfirm(true)}>Submit Test</button></div>
-        )}
       </footer>
 
       <AlertDialog open={confirm} onOpenChange={setConfirm}>
@@ -222,7 +256,7 @@ function Runner({ data }: { data: AttemptData }) {
           <div className="grid grid-cols-3 gap-3 text-center">
             <div className="rounded-xl bg-success/15 p-3"><p className="text-2xl font-bold">{answered}</p><p className="text-sm">Answered</p></div>
             <div className="rounded-xl bg-destructive/10 p-3"><p className="text-2xl font-bold">{qs.length - answered}</p><p className="text-sm">Unanswered</p></div>
-            <div className="rounded-xl bg-warning/25 p-3"><p className="text-2xl font-bold">{qs.filter((x) => flags[x.id]).length}</p><p className="text-sm">Flagged</p></div>
+            <div className="rounded-xl bg-warning/25 p-3"><p className="text-2xl font-bold">{flaggedCount}</p><p className="text-sm">Flagged</p></div>
           </div>
           <AlertDialogFooter>
             <Button variant="outline" className="h-12" onClick={() => setConfirm(false)}>Return to Test</Button>
@@ -232,6 +266,10 @@ function Runner({ data }: { data: AttemptData }) {
       </AlertDialog>
     </div>
   );
+}
+
+function MiniStat({ n, l, c }: { n: number; l: string; c: string }) {
+  return <div className={cn("rounded-xl p-2", c)}><p className="text-lg font-bold">{n}</p><p className="text-[11px]">{l}</p></div>;
 }
 
 function Legend({ c, l }: { c: string; l: string }) {
