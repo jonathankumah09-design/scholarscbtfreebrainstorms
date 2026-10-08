@@ -8,6 +8,13 @@
       "when": 1791459175957,
       "tag": "0000_base_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791459201775,
+      "tag": "0001_scholars_cbt_extensions",
+      "breakpoints": true
     }
   ]
 }
