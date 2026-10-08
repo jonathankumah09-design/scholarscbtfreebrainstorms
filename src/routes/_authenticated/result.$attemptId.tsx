@@ -133,9 +133,9 @@ function Result() {
 
 function Chip({ icon: Icon, n, l, c }: { icon: typeof CheckCircle2; n: number | null; l: string; c: string }) {
   return (
-    <div className={cn("flex items-center gap-3 rounded-2xl p-3 sm:p-4", c)}>
-      <Icon className="h-6 w-6 shrink-0" />
-      <div><p className="text-2xl font-extrabold text-foreground">{n ?? 0}</p><p className="text-xs font-bold">{l}</p></div>
+    <div className={cn("flex items-center gap-2 rounded-xl p-2 sm:p-2.5", c)}>
+      <Icon className="h-4 w-4 shrink-0" />
+      <div><p className="text-base font-extrabold leading-none text-foreground">{n ?? 0}</p><p className="text-[10px] font-bold">{l}</p></div>
     </div>
   );
 }
