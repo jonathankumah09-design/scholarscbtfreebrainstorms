@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { BarChart3, Megaphone, FileText, LayoutDashboard, ListChecks, LogOut, Radio, Settings, Users, Trophy, Activity } from "lucide-react";
+import { BarChart3, Megaphone, FileText, GraduationCap, LayoutDashboard, ListChecks, LogOut, Radio, Settings, Users, Trophy, Activity } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getIsAdmin } from "@/lib/auth";
 import { NotificationBell } from "@/components/NotificationBell";
