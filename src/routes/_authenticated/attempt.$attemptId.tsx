@@ -160,7 +160,7 @@ function Runner({ data }: { data: AttemptData }) {
   );
 
   return (
-    <div className="min-h-screen bg-background pb-6">
+    <div className="min-h-screen pb-6">
       <Calculator />
       <header className="sticky top-0 z-10 border-b bg-card/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5">
@@ -195,7 +195,7 @@ function Runner({ data }: { data: AttemptData }) {
                   return (
                     <button key={o.value} onClick={() => setA(o.value)}
                       className={cn("group flex min-h-11 w-full items-center gap-2.5 rounded-xl border-2 px-2.5 py-2 text-left text-sm font-medium transition sm:min-h-14 sm:gap-3 sm:p-3 sm:text-base",
-                        sel ? "border-primary bg-primary/10 shadow-md" : "border-border bg-background hover:-translate-y-0.5 hover:border-primary/50 hover:shadow")}>
+                        sel ? "border-primary bg-primary/10 shadow-md" : "border-border bg-card hover:-translate-y-0.5 hover:border-primary/50 hover:shadow")}>
                       <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border-2 font-display text-sm font-extrabold sm:h-9 sm:w-9 sm:text-base",
                         sel ? "border-primary bg-primary text-primary-foreground" : "border-input bg-muted group-hover:border-primary/50")}>
                         {sel ? <Check className="h-4 w-4" /> : q.type === "mcq" ? String.fromCharCode(65 + i) : i === 0 ? "T" : "F"}

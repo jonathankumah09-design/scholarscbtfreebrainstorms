@@ -38,7 +38,7 @@ function AdminLayout() {
     navigate({ to: "/staff", replace: true });
   }
   return (
-    <div className="relative min-h-screen bg-background md:flex">
+    <div className="relative min-h-screen md:flex">
       <HallWatermark />
       <aside className="relative z-10 bg-sidebar text-sidebar-foreground md:sticky md:top-0 md:h-screen md:w-60 md:shrink-0">
         <div className="flex items-center gap-3 px-4 py-4">

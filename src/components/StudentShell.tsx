@@ -65,7 +65,7 @@ export function StudentShell({ children }: { children: ReactNode }) {
   );
 
   return (
-    <div className="relative min-h-screen bg-background lg:flex">
+    <div className="relative min-h-screen lg:flex">
       <HallWatermark />
       <aside className="relative z-20 hidden bg-sidebar text-sidebar-foreground lg:sticky lg:top-0 lg:block lg:h-screen lg:w-64 lg:shrink-0">{side}</aside>
 
