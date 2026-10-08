@@ -43,6 +43,13 @@
       "when": 1791459889024,
       "tag": "0005_notifications_recording_gift",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791459949994,
+      "tag": "0006_english_compulsory_and_study_syllabus",
+      "breakpoints": true
     }
   ]
 }
