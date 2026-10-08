@@ -32,13 +32,13 @@ export function BankPicker({ testId, position, subject = "", onDone }: { testId:
     for (const part of range.split(/[,\s]+/).filter(Boolean)) {
       const m = part.match(/^(\d+)(?:-(\d+))?$/);
       if (!m) { toast.error(`Can't read "${part}"`); return; }
-      let a = +m[1], b = m[2] ? +m[2] : a;
+      let a = Number(m[1] ?? 0), b = m[2] ? Number(m[2]) : a;
       if (a > b) [a, b] = [b, a];
       for (let n = a; n <= b; n++) if (n >= 1 && n <= subRows.length) nums.add(n);
     }
     const sorted = [...nums].sort((x, y) => x - y);
     if (!sorted.length) { toast.error(`No matching numbers (1-${subRows.length})`); return; }
-    setPicked((p) => { const n = { ...p }; sorted.forEach((k) => { const x = subRows[k - 1]; n[x.id] = x; }); return n; });
+    setPicked((p) => { const n = { ...p }; sorted.forEach((k) => { const x = subRows[k - 1]; if (x) n[x.id] = x; }); return n; });
     toast.success(`${sorted.length} ${sub} questions selected`);
     setRange("");
   }
