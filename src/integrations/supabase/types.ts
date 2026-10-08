@@ -426,6 +426,7 @@ export type Database = {
           elective_subjects: string[]
           electives_to_pick: number
           end_at: string | null
+          gift_enabled: boolean
           gift_message: string
           id: string
           instructions: string
@@ -451,6 +452,7 @@ export type Database = {
           elective_subjects?: string[]
           electives_to_pick?: number
           end_at?: string | null
+          gift_enabled?: boolean
           gift_message?: string
           id?: string
           instructions?: string
@@ -476,6 +478,7 @@ export type Database = {
           elective_subjects?: string[]
           electives_to_pick?: number
           end_at?: string | null
+          gift_enabled?: boolean
           gift_message?: string
           id?: string
           instructions?: string
