@@ -19,7 +19,7 @@ function Practice() {
   const [pick, setPick] = useState<string | null>(null);
   const [score, setScore] = useState({ right: 0, seen: 0 });
   const rows = MASTER_BANK[sub] ?? [];
-  const [q, opts, ans, why] = rows[i % rows.length];
+  const [q, opts, ans, why] = rows[i % rows.length]!;
 
   function choose(l: string) {
     if (pick) return;
