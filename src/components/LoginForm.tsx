@@ -29,6 +29,7 @@ export function LoginForm({ mode }: { mode: "student" | "admin" }) {
       await supabase.auth.signOut();
       { toast.error("This account is not an administrator."); return; }
     }
+    if (!admin) void supabase.rpc("log_student_login");
     navigate({ to: admin ? "/admin" : "/dashboard" });
   }
 
