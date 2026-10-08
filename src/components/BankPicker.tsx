@@ -79,7 +79,9 @@ export function BankPicker({ testId, position, subject = "", onDone }: { testId:
             <div className="space-y-2">
               <div className="flex gap-2">
                 <Input placeholder="Search..." value={q} onChange={(e) => setQ(e.target.value)} />
-                <Button variant="outline" onClick={() => setPicked((p) => { const n = { ...p }; rows.forEach((x) => { n[x.id] = x; }); return n; })}>Select all</Button>
+                {rows.length > 0 && rows.every((x) => picked[x.id])
+                  ? <Button variant="outline" onClick={() => setPicked((p) => { const n = { ...p }; rows.forEach((x) => { delete n[x.id]; }); return n; })}>Deselect all</Button>
+                  : <Button variant="outline" onClick={() => setPicked((p) => { const n = { ...p }; rows.forEach((x) => { n[x.id] = x; }); return n; })}>Select all</Button>}
               </div>
               <div className="flex gap-2">
                 <Input placeholder="Numbers e.g. 1-29, 45-67, 70" value={range} onChange={(e) => setRange(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") selectRange(); }} />
@@ -100,7 +102,10 @@ export function BankPicker({ testId, position, subject = "", onDone }: { testId:
               </div>
             </div>
             <div className="rounded-xl border bg-muted/40 p-3">
-              <p className="font-bold">My list ({list.length})</p>
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-bold">My list ({list.length})</p>
+                {list.length > 0 && <Button size="sm" variant="outline" onClick={() => setPicked({})}>Clear all</Button>}
+              </div>
               <div className="mt-2 max-h-[45vh] space-y-1 overflow-y-auto text-sm">
                 {list.map((p, i) => (
                   <div key={p.id} className="flex justify-between gap-2 rounded-lg bg-card p-2">
