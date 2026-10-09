@@ -36,8 +36,7 @@ function Dashboard() {
 
   const upcoming = all.filter((t) => t.start_at && new Date(t.start_at).getTime() > now);
   const available = all.filter((t) =>
-    !upcoming.includes(t) && !(t.end_at && new Date(t.end_at).getTime() < now) &&
-    (inProgress.has(t.id) || t.attempts_used < Math.max(1, t.attempts_allowed)));
+    !upcoming.includes(t) && !(t.end_at && new Date(t.end_at).getTime() < now));
   const completedIds = new Set(submitted.map((r) => r.test_id));
   const completed = all.filter((t) => completedIds.has(t.id) && !available.includes(t));
 
@@ -85,7 +84,6 @@ function Dashboard() {
                 <Button asChild className="h-12 w-full bg-success text-base text-success-foreground hover:bg-success/90 sm:w-auto sm:px-8">
                   <Link to="/test/$testId" params={{ testId: t.id }}>{inProgress.has(t.id) ? "Continue CBT" : "Start CBT"}</Link>
                 </Button>
-                {t.attempts_allowed > 1 && <span className="text-sm text-muted-foreground">Attempts: {t.attempts_used}/{t.attempts_allowed}</span>}
               </TestCard>
             ))}
           </Section>

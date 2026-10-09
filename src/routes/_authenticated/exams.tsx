@@ -25,7 +25,7 @@ function Exams() {
         {!tests.isLoading && list.length === 0 && <p className="rounded-2xl border border-dashed p-8 text-center text-muted-foreground sm:col-span-2">No examinations available right now.</p>}
         {list.map((t) => {
           const upcoming = t.start_at && new Date(t.start_at).getTime() > now;
-          const canStart = inProgress.has(t.id) || t.attempts_used < Math.max(1, t.attempts_allowed);
+          const canStart = true;
           return (
             <div key={t.id} className="flex flex-col rounded-2xl border bg-card p-5 shadow-sm">
               <span className="w-fit rounded-full bg-accent px-3 py-1 text-xs font-bold text-accent-foreground">{t.subject}</span>

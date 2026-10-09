@@ -108,6 +108,16 @@
     font-family: var(--font-sans);
     font-size: 17px;
   }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: url("https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1600&q=60") center / cover no-repeat;
+    opacity: 0.1;
+    filter: grayscale(30%);
+  }
   h1, h2, h3, h4 {
     font-family: var(--font-display);
     letter-spacing: -0.02em;

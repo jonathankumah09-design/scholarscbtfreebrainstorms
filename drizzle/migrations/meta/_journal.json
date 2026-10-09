@@ -78,6 +78,13 @@
       "when": 1791494571547,
       "tag": "0010_auto_student_ids",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1791551550136,
+      "tag": "0011_unlimited_attempts",
+      "breakpoints": true
     }
   ]
 }

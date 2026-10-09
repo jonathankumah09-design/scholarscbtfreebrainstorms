@@ -78,7 +78,6 @@ export function TestForm({ initial, onSubmit, submitLabel, questionCount }: { in
       <F label="Instructions" className="sm:col-span-2"><Textarea rows={3} value={v.instructions} onChange={up("instructions")} placeholder="Answer all questions." /></F>
       <F label="Duration (minutes)"><Input type="number" min={1} required value={v.duration_minutes} onChange={up("duration_minutes")} /></F>
       <F label="Passing Percentage"><Input type="number" min={0} max={100} required value={v.pass_percentage} onChange={up("pass_percentage")} /></F>
-      <F label="Attempts Allowed"><Input type="number" min={1} required value={v.attempts_allowed} onChange={up("attempts_allowed")} /></F>
       <p className="self-end text-xs text-muted-foreground">Total questions and total marks are counted automatically from the questions you add.</p>
       <F label="Start Date (optional)"><Input type="date" value={v.sd} onChange={up("sd")} /></F>
       <F label="Start Time"><Input type="time" value={v.st} onChange={up("st")} /></F>
