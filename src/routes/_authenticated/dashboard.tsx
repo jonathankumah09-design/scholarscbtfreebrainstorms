@@ -6,7 +6,7 @@ import { StudentShell } from "@/components/StudentShell";
 import { Announcements } from "@/components/Announcements";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { gradeFor, pct, useMe, useSettings } from "@/lib/auth";
+import { useMe } from "@/lib/auth";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "My Dashboard — SCHOLARS CBT" }] }),
@@ -23,7 +23,6 @@ const SPARKS = [
 ];
 function Dashboard() {
   const { data: me } = useMe();
-  const { data: settings } = useSettings();
   const navigate = useNavigate();
   useEffect(() => { if (me?.isAdmin) navigate({ to: "/admin" }); }, [me, navigate]);
   const tests = useQuery({ queryKey: ["student-tests"], queryFn: async () => (await supabase.rpc("student_tests")).data ?? [] });
@@ -125,33 +124,6 @@ function Dashboard() {
             </div>
           )}
         </aside>
-      </div>
-
-      <h2 className="mt-10 text-xl font-bold">Result Slips</h2>
-      <div className="mt-3 overflow-x-auto rounded-2xl border bg-card">
-        {submitted.length === 0 ? (
-          <p className="p-6 text-center text-muted-foreground">No results yet.</p>
-        ) : (
-          <table className="w-full min-w-[480px] text-left text-sm">
-            <thead className="bg-muted"><tr><th className="p-3">Test</th><th className="p-3">Score</th><th className="p-3">%</th><th className="p-3">Grade</th><th className="p-3">Status</th></tr></thead>
-            <tbody>
-              {submitted.map((r) => {
-                const p = pct(r.score, r.total);
-                return (
-                  <tr key={r.attempt_id} className="border-t">
-                    <td className="p-3"><Link to="/result/$attemptId" params={{ attemptId: r.attempt_id }} className="font-bold text-primary">{r.test_title}</Link></td>
-                    {r.show_results ? (<>
-                      <td className="p-3">{r.score}/{r.total}</td>
-                      <td className="p-3">{p}%</td>
-                      <td className="p-3 font-bold">{gradeFor(p, settings?.grade_scale)}</td>
-                      <td className="p-3">{r.pending_grading ? <span className="text-muted-foreground">Marking</span> : p >= r.pass_percentage ? <span className="font-bold text-success">Passed</span> : <span className="font-bold text-destructive">Failed</span>}</td>
-                    </>) : <td colSpan={4} className="p-3 text-muted-foreground">Result not released yet</td>}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        )}
       </div>
     </StudentShell>
   );
