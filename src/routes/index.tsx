@@ -33,7 +33,7 @@ function Home() {
     <main className="min-h-screen">
       <section className="relative overflow-hidden text-primary-foreground">
         <img src={HERO} alt="Scholars studying in a quiet library" width={1600} height={1000} className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/85 to-background/40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/30" />
         <div className="relative mx-auto max-w-5xl px-5 pb-24 pt-8">
           <div className="flex items-center gap-3">
             <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-success text-success-foreground shadow-sm"><GraduationCap className="h-7 w-7" /></span>
