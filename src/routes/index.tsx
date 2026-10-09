@@ -31,7 +31,7 @@ const features = [
 function Home() {
   return (
     <main className="min-h-screen">
-      <section className="relative overflow-hidden text-primary-foreground">
+      <section className="relative overflow-hidden text-foreground">
         <img src={HERO} alt="Scholars studying in a quiet library" width={1600} height={1000} className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/30" />
         <div className="relative mx-auto max-w-5xl px-5 pb-24 pt-8">
