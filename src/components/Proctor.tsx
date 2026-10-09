@@ -20,6 +20,7 @@ function pickMime() {
 
 type ProctorState = { stream: MediaStream | null; switches: number };
 const ProctorCtx = createContext<ProctorState>({ stream: null, switches: 0 });
+export const useProctor = () => useContext(ProctorCtx);
 
 /** Live camera tile that mirrors the proctor stream. Place it anywhere inside <Proctor>. */
 export function CameraMonitor({ className = "" }: { className?: string }) {
@@ -72,6 +73,7 @@ export function Proctor({ attemptId, studentId, children }: { attemptId: string;
       const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: 640 }, audio: false });
       streamRef.current = s;
       s.getVideoTracks()[0]?.addEventListener("ended", () => { setReady(false); void log("camera_off").then(flush); });
+      void document.documentElement.requestFullscreen?.().catch(() => {});
       setReady(true);
     } catch {
       setErr("Camera access was blocked. Allow the camera in your browser settings, then tap the button again.");
@@ -127,6 +129,7 @@ export function Proctor({ attemptId, studentId, children }: { attemptId: string;
   }, [ready, attemptId, studentId, log]);
 
   useEffect(() => {
+    if (!ready) return;
     const onVis = () => {
       if (document.visibilityState === "hidden") {
         setSwitches((n) => n + 1);
@@ -134,9 +137,32 @@ export function Proctor({ attemptId, studentId, children }: { attemptId: string;
         toast.warning("Leaving the test page is recorded and reported to your examiner.");
       }
     };
+    const onFs = () => {
+      if (!document.fullscreenElement) {
+        setSwitches((n) => n + 1);
+        void log("tab_switch").then(flush);
+        toast.warning("You left full screen. This is recorded. Tap anywhere to return.");
+      }
+    };
+    const refs = () => { if (!document.fullscreenElement) void document.documentElement.requestFullscreen?.().catch(() => {}); };
+    const block = (e: Event) => e.preventDefault();
+    const unload = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ""; };
     document.addEventListener("visibilitychange", onVis);
-    return () => document.removeEventListener("visibilitychange", onVis);
-  }, [log]);
+    document.addEventListener("fullscreenchange", onFs);
+    document.addEventListener("click", refs);
+    document.addEventListener("contextmenu", block);
+    document.addEventListener("copy", block);
+    window.addEventListener("beforeunload", unload);
+    return () => {
+      document.removeEventListener("visibilitychange", onVis);
+      document.removeEventListener("fullscreenchange", onFs);
+      document.removeEventListener("click", refs);
+      document.removeEventListener("contextmenu", block);
+      document.removeEventListener("copy", block);
+      window.removeEventListener("beforeunload", unload);
+      if (document.fullscreenElement) void document.exitFullscreen().catch(() => {});
+    };
+  }, [ready, log]);
 
   useEffect(() => () => streamRef.current?.getTracks().forEach((t) => t.stop()), []);
 

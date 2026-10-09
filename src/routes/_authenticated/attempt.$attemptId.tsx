@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
-import { Proctor, CameraMonitor } from "@/components/Proctor";
+import { Proctor, CameraMonitor, useProctor } from "@/components/Proctor";
 import { GiftCard } from "@/components/GiftCard";
 import { Calculator } from "@/components/Calculator";
 import { flushAdminEmails } from "@/lib/notify.functions";
@@ -104,6 +104,13 @@ function Runner({ data }: { data: AttemptData }) {
     return () => clearInterval(t);
   }, [deadline, submit]);
 
+  // auto-submit after too many tab switches / full-screen exits
+  const { switches } = useProctor();
+  useEffect(() => {
+    if (switches === 3) toast.error("Warning: 2 more exits and your test will be submitted automatically.");
+    if (switches >= 5) { toast.error("Too many exits. Your test was submitted."); void submit(false); }
+  }, [switches, submit]);
+
   // autosave
   useEffect(() => {
     localStorage.setItem(storageKey, JSON.stringify(answers));
@@ -160,7 +167,7 @@ function Runner({ data }: { data: AttemptData }) {
   );
 
   return (
-    <div className="min-h-screen pb-6">
+    <div className="min-h-screen select-none pb-6 [-webkit-touch-callout:none]">
       <Calculator />
       <header className="sticky top-0 z-10 border-b bg-card/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5">
